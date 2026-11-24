@@ -573,13 +573,13 @@ const GEN=[{tiles:tiles0,objs:objs0},{tiles:tiles1,objs:objs1},{tiles:tiles2,obj
 const p={x:15,y:26,path:[],after:null,face:1,back:false,moving:false,walkT:0,action:null,target:null,atkCd:0,chaseT:0,lightOn:false};
 let inv={},tools={},hunger=100,hp=100,time=DAY*.12,puz,beacon={dep:0,lit:false},read=false,won=false,flags={},qs={},stats={kills:0},torchT=0,nextId=1,thirst=100,skills={},rain=0,rainTarget=0,rainT=70,rainDur=0;
 let arrows=[],beam=null,lightsNow=[];
-const FLAT={dudnik:1,branch:1,pebble:1,tuft:1,plate:1,reed:1,shroom:1,glowshroom:1,bones:1,pit:1,vent:1,crater:1,o2can:1,sporecap:1};
+const FLAT={bolete:1,dudnik:1,branch:1,pebble:1,tuft:1,plate:1,reed:1,shroom:1,glowshroom:1,bones:1,pit:1,vent:1,crater:1,o2can:1,sporecap:1};
 const BLOCK={oak:1,pine:1,palm:1,willow:1,rock:1,bush:1,wreck:1,beacon:1,pedestal:1,totem:1,altar:1,boulder:1,pillar:1,campfire:1,torchpost:1,shelter:1,smoker:1,pen:1,npc:1,hut:1,frog:1,stela:1,dial:1,gate:1,gpillar:1,cave:1,crag:1,stalag:1,crystal:1,mirror:1,shaft:1,heart:1,caveexit:1,carving:1,boat:1,chest:1,collector:1,spring:1,sign:1,cactus:1,deadtree:1,portal:1,astro:1,depot:1,probe:1,lander:1,moonrock:1,glowtree:1,espire:1,tablet:1,shuttle:1,tent:1,terminal:1,cache:1,rcrate:1};
 const TREE={oak:1,pine:1,palm:1,willow:1,glowtree:1};const HOST={wolf:1,stalker:1},PREY={rabbit:1,skitter:1},HUM={merc:1,warden:1,duelist:1,sister:1};
-const ITEMS={wood:'Drewno',stone:'Kamień',fiber:'Włókno',berries:'Jagody',shroom:'Grzyby',fish:'Surowa ryba',cooked:'Pieczona ryba',meat:'Surowe mięso',roast:'Pieczone mięso',smoked:'Wędzone mięso',hide:'Skóra',crystal:'Kryształ',potion:'Napar leczniczy',torch:'Pochodnia',arrow:'Strzały',shard:'Odłamek runy',seal:'Pieczęć',campfire:'Ognisko',torchpost:'Słup z pochodnią',shelter:'Szałas',smoker:'Wędzarnia',pen:'Zagroda',plank:'Kładka',flask:'Pusta manierka',water:'Czysta woda',dirty:'Brudna woda',coconut:'Kokos',collector:'Łapacz deszczówki',ring:'Fragment pierścienia',cfruit:'Owoc kaktusa',pit:'Dół na deszczówkę',probe:'Dane sondy',regolith:'Próbka regolitu',spore:'Zarodniki',ecrystal:'Kryształ energii',o2:'Butla tlenu',pcrystal:'Kryształ zasilający',chip:'Chip najemnika',dudnik:'Dudnik'};
+const ITEMS={wood:'Drewno',stone:'Kamień',fiber:'Włókno',berries:'Jagody',shroom:'Muchomory',bolete:'Borowiki',fish:'Surowa ryba',cooked:'Pieczona ryba',meat:'Surowe mięso',roast:'Pieczone mięso',smoked:'Wędzone mięso',hide:'Skóra',crystal:'Kryształ',potion:'Napar leczniczy',torch:'Pochodnia',arrow:'Strzały',shard:'Odłamek runy',seal:'Pieczęć',campfire:'Ognisko',torchpost:'Słup z pochodnią',shelter:'Szałas',smoker:'Wędzarnia',pen:'Zagroda',plank:'Kładka',flask:'Pusta manierka',water:'Czysta woda',dirty:'Brudna woda',coconut:'Kokos',collector:'Łapacz deszczówki',ring:'Fragment pierścienia',cfruit:'Owoc kaktusa',pit:'Dół na deszczówkę',probe:'Dane sondy',regolith:'Próbka regolitu',spore:'Zarodniki',ecrystal:'Kryształ energii',o2:'Butla tlenu',pcrystal:'Kryształ zasilający',chip:'Chip najemnika',dudnik:'Dudnik'};
 const TOOLS={coat:'Futrzana kurtka',cloak:'Peleryna',shovel:'Łopata',axe:'Siekiera',pick:'Kilof',rod:'Wędka',sword:'Kamienny miecz',sword2:'Kryształowy miecz',sword3:'Włócznia wojownika',bow:'Łuk',lantern:'Latarenka',emitter:'Emiter ogłuszający',shield:'Tarcza energetyczna',sword4:'Szabla klanu',amulet:'Amulet ciszy',armor:'Pancerz strażnika',scanner:'Skaner',suit:'Skafander',suit2:'Ulepszony skafander'};
-const ITEM_ORDER=['water','dirty','flask','coconut','torch','arrow','potion','smoked','roast','cooked','berries','shroom','meat','fish','wood','stone','fiber','hide','crystal','shard','seal','campfire','torchpost','shelter','smoker','pen','collector','pit','plank','ring','cfruit','pcrystal','dudnik','chip','o2','probe','regolith','spore','ecrystal'];
-const FOOD={berries:12,shroom:6,fish:8,cooked:35,meat:6,roast:30,smoked:50};
+const ITEM_ORDER=['water','dirty','flask','coconut','torch','arrow','potion','smoked','roast','cooked','berries','bolete','shroom','meat','fish','wood','stone','fiber','hide','crystal','shard','seal','campfire','torchpost','shelter','smoker','pen','collector','pit','plank','ring','cfruit','pcrystal','dudnik','chip','o2','probe','regolith','spore','ecrystal'];
+const FOOD={berries:12,bolete:14,shroom:6,fish:8,cooked:35,meat:6,roast:30,smoked:50};
 const PLACE={campfire:1,torchpost:1,shelter:1,smoker:1,pen:1,collector:1,pit:1};
 const RECIPES=[
   {cat:'Narzędzia',id:'axe',name:'Kamienna siekiera',desc:'Ścinasz drzewa na drewno',need:{wood:3,stone:2,fiber:2},tool:1},
@@ -605,7 +605,7 @@ const RECIPES=[
   {cat:'Inne',id:'pcrystal',name:'Kryształ zasilający',desc:'Zasila terminal pierścienia. Szlifujesz go z kryształów energii z Veyry',need:{ecrystal:3}},
   {cat:'Inne',id:'potion',name:'Napar leczniczy',desc:'Przywraca 50 zdrowia',need:{shroom:3,berries:2}},
 ];
-const NAMES={oak:'Dąb',pine:'Sosna',palm:'Palma',willow:'Wierzba',stump:'Pniak',rock:'Skała',bush:'Krzak jagód',branch:'Gałąź',pebble:'Kamyk',tuft:'Trawa',reed:'Trzcina',shroom:'Grzyby',glowshroom:'Świecące grzyby',wreck:'Wrak „Mewy”',beacon:'Latarnia',pedestal:'Piedestał',plate:'Płyta runiczna',totem:'Totem',altar:'Ołtarz',boulder:'Głaz',pillar:'Kolumna',gpillar:'Kolumna wrót',campfire:'Ognisko',torchpost:'Słup z pochodnią',shelter:'Szałas',smoker:'Wędzarnia',pen:'Zagroda',boat:'Łódź kapitan Miry',hut:'Chatka zielarki',frog:'Kamienna żaba',stela:'Stela',dial:'Kamienna tarcza',gate:'Wrota świątyni',cave:'Wejście do jaskini',crag:'Skała',caveexit:'Wyjście na powierzchnię',stalag:'Stalagmit',crystal:'Kryształy',mirror:'Lustro',shaft:'Snop światła',heart:'Serce Jaskini',carving:'Płaskorzeźba',chest:'Stara skrzynia',collector:'Łapacz deszczówki',spring:'Źródło',sign:'Tabliczka',cactus:'Kaktus',deadtree:'Martwe drzewo',vent:'Gorące wyziewy',bones:'Kości',pit:'Dół z wodą',wolf:'Wilk',rabbit:'Zając',boar:'Dzik',mara:'Nocna mara',portal:'Kamienny pierścień',astro:'Gwiezdna płyta',depot:'Magazyn bazy',probe:'Rozbita sonda',lander:'Stary lądownik',crater:'Krater',moonrock:'Księżycowa skała',o2can:'Butla tlenu',glowtree:'Lśniące drzewo',sporecap:'Grzyb zarodnikowy',espire:'Kryształowa iglica',tablet:'Tablica Pradawnych',shuttle:'Wahadłowiec „Meridian”',tent:'Namiot ekspedycji',terminal:'Terminal pierścienia',cache:'Stara skrytka',rcrate:'Skrzynia najemników',dudnik:'Dudnik',merc:'Najemnik',warden:'Strażnik w czerni',duelist:'Torvak (pojedynek)',sister:'Odszczepiona siostra',skitter:'Skoczek',stalker:'Cieniołak'};
+const NAMES={oak:'Dąb',pine:'Sosna',palm:'Palma',willow:'Wierzba',stump:'Pniak',rock:'Skała',bush:'Krzak jagód',branch:'Gałąź',pebble:'Kamyk',tuft:'Trawa',reed:'Trzcina',shroom:'Muchomory',bolete:'Borowiki',glowshroom:'Świecące grzyby',wreck:'Wrak „Mewy”',beacon:'Latarnia',pedestal:'Piedestał',plate:'Płyta runiczna',totem:'Totem',altar:'Ołtarz',boulder:'Głaz',pillar:'Kolumna',gpillar:'Kolumna wrót',campfire:'Ognisko',torchpost:'Słup z pochodnią',shelter:'Szałas',smoker:'Wędzarnia',pen:'Zagroda',boat:'Łódź kapitan Miry',hut:'Chatka zielarki',frog:'Kamienna żaba',stela:'Stela',dial:'Kamienna tarcza',gate:'Wrota świątyni',cave:'Wejście do jaskini',crag:'Skała',caveexit:'Wyjście na powierzchnię',stalag:'Stalagmit',crystal:'Kryształy',mirror:'Lustro',shaft:'Snop światła',heart:'Serce Jaskini',carving:'Płaskorzeźba',chest:'Stara skrzynia',collector:'Łapacz deszczówki',spring:'Źródło',sign:'Tabliczka',cactus:'Kaktus',deadtree:'Martwe drzewo',vent:'Gorące wyziewy',bones:'Kości',pit:'Dół z wodą',wolf:'Wilk',rabbit:'Zając',boar:'Dzik',mara:'Nocna mara',portal:'Kamienny pierścień',astro:'Gwiezdna płyta',depot:'Magazyn bazy',probe:'Rozbita sonda',lander:'Stary lądownik',crater:'Krater',moonrock:'Księżycowa skała',o2can:'Butla tlenu',glowtree:'Lśniące drzewo',sporecap:'Grzyb zarodnikowy',espire:'Kryształowa iglica',tablet:'Tablica Pradawnych',shuttle:'Wahadłowiec „Meridian”',tent:'Namiot ekspedycji',terminal:'Terminal pierścienia',cache:'Stara skrytka',rcrate:'Skrzynia najemników',dudnik:'Dudnik',merc:'Najemnik',warden:'Strażnik w czerni',duelist:'Torvak (pojedynek)',sister:'Odszczepiona siostra',skitter:'Skoczek',stalker:'Cieniołak'};
 const NPC={inga:{name:'Traperka Inga'},olek:{name:'Rybak Olek'},wanda:{name:'Zielarka Wanda'},bruno:{name:'Górnik Bruno'},ilsa:{name:'Komandor Ilsa Ren'},tavik:{name:'Oficer naukowy Tavik'},okafor:{name:'Płk Ruth Okafor'},marsh:{name:'Dr Teo Marsh'},keltar:{name:'Kel’tar'},hieronim:{name:'Pustelnik Hieronim'},saida:{name:'Saida z pustyni'},torvak:{name:'Torvak z klanu Popiołów'},veda:{name:'Siostra Veda'},nox:{name:'Nox, haker'}};
 const QUESTS={
   olek:[
@@ -615,7 +615,7 @@ const QUESTS={
     {title:'Nocna warta',ask:'Mary boją się ognia i ostrza. Przegoń 4, a dam ci zapas pochodni i strzał.',goal:'Pokonaj 4 nocne mary',req:{kills:4},reward:{torch:3,arrow:10},done:'Takiej spokojnej nocy dawno nie miałem. Dziękuję!'},
   ],
   wanda:[
-    {title:'Grzyby na wywar',ask:'Witaj, przybyszu. Jestem Wanda, zielarka. Na bagnie rosną czerwone grzyby. Przynieś mi 4, a uwarzę ci napar leczniczy.',goal:'Przynieś 4 grzyby',req:{items:{shroom:4}},reward:{potion:2},done:'Pachną deszczem, idealne. Masz dwa napary. Gorzkie, ale leczą rany.'},
+    {title:'Grzyby na wywar',ask:'Witaj, przybyszu. Jestem Wanda, zielarka. Na bagnie rosną czerwone muchomory. Broń Boże ich nie jedz, są trujące! Ale w moim naparze tracą jad i leczą. Przynieś mi 4, a uwarzę ci napar leczniczy. Jeśli szukasz czegoś do jedzenia, zbieraj brązowe borowiki pod drzewami.',goal:'Przynieś 4 muchomory',req:{items:{shroom:4}},reward:{potion:2},done:'Pachną deszczem, idealne. Masz dwa napary. Gorzkie, ale leczą rany.'},
     {title:'Wędzonka dla zielarki',ask:'Od tygodnia jem korzonki. Zbuduj wędzarnię i przynieś mi 3 kawałki wędzonego mięsa.',goal:'Przynieś 3 wędzone mięsa',req:{items:{smoked:3}},reward:{potion:2,arrow:10},done:'Niebo w gębie! Słuchaj: kamienna żaba przy bagnie zna bezpieczną drogę przez błoto.'},
     {title:'Własna zagroda',ask:'Zające same nie przyjdą do garnka. Zbuduj zagrodę i zwab do niej zwierzę jagodami.',goal:'Zwab zwierzę do zagrody',req:{penned:1},reward:{potion:2,smoked:2},done:'Brawo! Teraz zawsze będziesz mieć mięso i skóry.'},
   ],
@@ -704,8 +704,8 @@ function newGame(){
 }
 function loadLevel(id){
   if(!LV[id]){LV[id]=makeLevel(id);GEN[id].objs();}else bind(LV[id]);
-  placeExtras(id);placeTerm(id);placeExtras2(id);placeExtras3(id);
-  flags.duelOn=0;crit.length=0;mobs.length=0;arrows=[];ebolts.length=0;parts.length=0;beam=null;mobT=3;dialS=null;
+  placeExtras(id);placeTerm(id);placeExtras2(id);placeExtras3(id);placeBoletes(id);
+  flags.duelOn=0;vomits.length=0;crit.length=0;mobs.length=0;arrows=[];ebolts.length=0;parts.length=0;beam=null;mobT=3;dialS=null;
   populate();buildTerrain();ensureBoat();resetWeather();if(M.started)setMusicFor(id);
 }
 function placeExtras(id){if(flags['x'+id])return;flags['x'+id]=1;
@@ -731,6 +731,9 @@ function spawnCamp(force){if(lv.id!==8)return;const n=crit.filter(c=>c.kind==='m
     crit.push({kind:'merc',x:q[0]+(Math.random()-.5)*.6,y:q[1]+(Math.random()-.5)*.6,home:q.slice(),hp:8,sh:4,shMax:4,shT:0,st:'idle',t:0,face:1,cd:1.5,ph:0,flash:0,mv:false,dir:Math.random()<.5?1:-1,aim:0,sk:SKINS[(Math.random()*SKINS.length)|0]});}
   if(force&&!flags.wardenDead&&!crit.some(c=>c.kind==='warden')){const q=freeSpot(CAMP[0],CAMP[1]);if(q)crit.push({kind:'warden',x:q[0],y:q[1],home:q.slice(),hp:30,maxHp:30,st:'idle',t:0,face:1,cd:1,ph:0,flash:0,mv:false,wind:0,dir:1});}}
 function placeExtras3(id){if(flags['xe'+id])return;flags['xe'+id]=1;const P=(t,x,y,e)=>{const q=freeSpot(x,y);if(q)put(t,q[0],q[1],e);};if(id===4)P('npc',23,33,{who:'torvak'});if(id===1)P('npc',21,20,{who:'veda'});}
+function placeBoletes(id){if(flags['xb'+id]||![0,1,3,6,8].includes(id))return;flags['xb'+id]=1;const R=rng(9000+id);let n=0;
+  for(let k=0;k<400&&n<(id===1?8:6);k++){const x=1+Math.floor(R()*(W-2)),y=1+Math.floor(R()*(H-2)),i=idx(x,y);if(T[i]!==GRASS||grid[i]||RES[i])continue;
+    let near=false;for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){const o=inb(x+dx,y+dy)&&grid[idx(x+dx,y+dy)];if(o&&TREE[o.type])near=true;}if(!near&&R()>.15)continue;put('bolete',x,y,{cut:false});n++;}}
 function termN(){return flags['term'+lv.id]||0;}
 function ensureBoat(arrive){if(lv.id!==0||!beacon.lit)return;for(const b of objs.filter(o=>o.type==='boat'&&(o.x!==lv.boat[0]||o.y!==lv.boat[1])))removeObj(b);if(objs.some(o=>o.type==='boat'))return;const [lx,ly]=lv.boatLand,o=grid[idx(lx,ly)];if(o&&BLOCK[o.type])removeObj(o);put('boat',lv.boat[0],lv.boat[1],arrive?{arrive:{t:0,dur:11}}:undefined);if(arrive){setTimeout(()=>{toast('Z morskiej mgły dobiega dźwięk rogu… Ktoś zobaczył światło latarni!','rune');tone(98,1.6,'sawtooth',.05);tone(147,1.6,'sawtooth',.035,0,.05);},700);}}
 
@@ -975,6 +978,13 @@ function drawReed(c,cx,cy,o,t){
     c.strokeStyle=i%2?'#7d8f3e':'#a3b04e';c.lineWidth=1.8;c.beginPath();c.moveTo(bx,by);c.quadraticCurveTo(bx+sw*.4,by-len*.6,bx+sw,by-len);c.stroke();
     if(i%3===0){c.save();c.translate(bx+sw,by-len+5);c.rotate(sw*.04);ell(c,0,0,2.4,5.5,'#6b4224');c.restore();}}
 }
+function drawBolete(c,cx,cy,o,t){
+  if(o.cut){ell(c,cx,cy,3,1.4,'rgba(90,60,40,.5)');return;}
+  [[-5,1,1.1],[5,-1,.9],[0,4,.7]].forEach(([dx,dy,s2])=>{const x=cx+dx,y=cy+dy;ell(c,x+1,y+1,5.5*s2,2*s2,'rgba(0,0,0,.22)');
+    c.fillStyle='#e8dcc0';c.beginPath();c.moveTo(x-2.6*s2,y);c.quadraticCurveTo(x-3.8*s2,y-4*s2,x-2*s2,y-7*s2);c.lineTo(x+2*s2,y-7*s2);c.quadraticCurveTo(x+3.8*s2,y-4*s2,x+2.6*s2,y);c.closePath();c.fill();
+    c.strokeStyle='rgba(150,120,80,.4)';c.lineWidth=.5;for(let k=0;k<3;k++){c.beginPath();c.moveTo(x-1.8*s2,y-1.5*s2-k*1.6*s2);c.lineTo(x+1.8*s2,y-2*s2-k*1.6*s2);c.stroke();}
+    const g=c.createRadialGradient(x-2*s2,y-10*s2,.5,x,y-8*s2,7*s2);g.addColorStop(0,'#a8683a');g.addColorStop(1,'#5e3418');c.fillStyle=g;c.beginPath();c.ellipse(x,y-7.6*s2,6.4*s2,4.8*s2,0,Math.PI,0);c.fill();
+    ell(c,x,y-7.6*s2,6.4*s2,1.5*s2,'#d8c890');ell(c,x-2*s2,y-10*s2,2*s2,.8*s2,'rgba(255,230,200,.35)');});}
 function drawShroom(c,cx,cy,o,t){
   if(o.cut){ell(c,cx,cy,3,1.4,'rgba(90,60,40,.5)');return;}
   [[-6,1,1],[4,-1,1.25],[0,4,.8]].forEach(([dx,dy,s])=>{const x=cx+dx,y=cy+dy;ell(c,x+1,y+1,5*s,2*s,'rgba(0,0,0,.2)');c.fillStyle='#efe6d0';c.fillRect(x-1.6*s,y-7*s,3.2*s,7*s);
@@ -1768,7 +1778,7 @@ function drawObj(c,o,cx,cy,t){
     case'altar':drawAltar(c,cx,cy,o,t);break;case'totem':drawTotem(c,cx,cy,o,t);break;case'boulder':drawBoulder(c,cx,cy,o);break;
     case'pillar':drawPillar(c,cx,cy,o,t);break;case'gpillar':drawPillar(c,cx,cy,o,t,true);break;case'campfire':drawCampfire(c,cx,cy,o,t);break;
     case'branch':drawBranch(c,cx,cy,o);break;case'pebble':drawPebble(c,cx,cy,o);break;case'tuft':drawTuft(c,cx,cy,o,t);break;case'plate':drawPlate(c,cx,cy,o,t);break;
-    case'reed':drawReed(c,cx,cy,o,t);break;case'shroom':drawShroom(c,cx,cy,o,t);break;case'glowshroom':drawGlowshroom(c,cx,cy,o,t);break;
+    case'reed':drawReed(c,cx,cy,o,t);break;case'shroom':drawShroom(c,cx,cy,o,t);break;case'bolete':drawBolete(c,cx,cy,o,t);break;case'glowshroom':drawGlowshroom(c,cx,cy,o,t);break;
     case'torchpost':drawTorchpost(c,cx,cy,o,t);break;case'shelter':drawShelter(c,cx,cy,o,t);break;case'smoker':drawSmoker(c,cx,cy,o,t);break;
     case'boat':drawBoat(c,cx,cy,o,t);break;case'hut':drawHut(c,cx,cy,o,t);break;case'frog':drawFrog(c,cx,cy,o,t);break;case'stela':drawStela(c,cx,cy,o,t);break;
     case'dial':drawDial(c,cx,cy,o,t);break;case'gate':drawGate(c,cx,cy,o,t);break;case'cave':drawCave(c,cx,cy,o,t);break;
@@ -2069,7 +2079,8 @@ function interact(o){
     case'branch':near(o,1,()=>startAction(.35/spd('gather'),'pick',()=>{add('wood',1+bonus('gather'),o.x,o.y);gainXp('gather',2);sfx('pick');removeObj(o);respawns.push({type:'branch',x:o.x,y:o.y,t:170});hint('wood');}));break;
     case'pebble':near(o,1,()=>startAction(.35/spd('gather'),'pick',()=>{add('stone',1+bonus('gather'),o.x,o.y);gainXp('gather',2);sfx('pick');removeObj(o);respawns.push({type:'pebble',x:o.x,y:o.y,t:200});}));break;
     case'tuft':case'reed':if(o.cut){toast('Jeszcze odrasta');return;}near(o,1,()=>startAction(.45/spd('gather'),'pick',()=>{add('fiber',(o.type==='reed'?2:1)+bonus('gather'),o.x,o.y);gainXp('gather',2);sfx('pick');o.cut=true;o.regrow=60;burst(wx,wy-6,'#b6d45a',6,{sp:40,up:40});}));break;
-    case'shroom':if(o.cut){toast('Grzyby jeszcze nie odrosły');return;}near(o,1,()=>startAction(.45/spd('gather'),'pick',()=>{add('shroom',2+bonus('gather'),o.x,o.y);gainXp('gather',2);sfx('pick');o.cut=true;o.regrow=90;}));break;
+    case'bolete':if(o.cut){toast('Tu już nic nie ma. Borowiki odrosną za jakiś czas.');return;}near(o,1,()=>startAction(.45/spd('gather'),'pick',()=>{add('bolete',1+bonus('gather'),o.x,o.y);gainXp('gather',2);sfx('pick');o.cut=true;o.regrow=150;}));break;
+    case'shroom':if(o.cut){toast('Muchomory jeszcze nie odrosły');return;}near(o,1,()=>startAction(.45/spd('gather'),'pick',()=>{add('shroom',2+bonus('gather'),o.x,o.y);gainXp('gather',2);sfx('pick');o.cut=true;o.regrow=90;}));break;
     case'glowshroom':toast('Świecące grzyby. Piękne, ale niejadalne.');break;
     case'bush':if(!o.berries){toast('Jagody jeszcze nie odrosły');return;}near(o,1,()=>startAction(.6/spd('gather'),'pick',()=>{add('berries',3+bonus('gather'),o.x,o.y);gainXp('gather',2);sfx('pick');o.berries=false;o.regrow=55;burst(wx,wy-12,'#d42a4a',6,{sp:50,up:50});hint('berries');}));break;
     case'oak':case'pine':case'palm':case'willow':case'glowtree':
@@ -2254,6 +2265,19 @@ function bogStep(){const x=Math.round(p.x),y=Math.round(p.y);if(!inb(x,y)||T[idx
   if(p.sinking)return;p.path=[];p.after=null;p.target=null;p.action=null;p.x=x;p.y=y;p.sinking=true;p.sinkT=0;
   bogSinks.push({x,y,t:0,hx:(hash(x,y,8)-.5)*4});const [wx,wy]=iso(x,y);burst(wx,wy-2,'#3e4a2a',14,{sp:50,up:40,g:120});
   if(!playS('splash',.55,.55))sfx('splash');setTimeout(()=>{if(!playS('drip',.5,.6))tone(160,.25,'sine',.05,-80);},350);setTimeout(()=>playS('drip',.4,.45),800);}
+let poison=null;const vomits=[];
+function startPoison(){if(poison){poison.t=Math.min(poison.t,2);toast('Jeszcze więcej muchomorów… To był bardzo zły pomysł.','bad');return;}poison={t:0,vom:false};floatText(Math.round(p.x),Math.round(p.y),'Coś tu nie gra…','#d8a0ff');}
+function updPoison(dt){for(let i=vomits.length-1;i>=0;i--){vomits[i].t+=dt;if(vomits[i].t>40)vomits.splice(i,1);}
+  if(!poison){if(cv.style.filter)cv.style.filter='';return;}const P=poison;P.t+=dt;
+  if(P.t>2.5&&!P.m1){P.m1=1;toast('Kręci ci się w głowie. Świat faluje i rozmywa się…','bad');}
+  if(P.t>9&&!P.vom){P.vom=true;p.path=[];p.after=null;p.target=null;p.action=null;startAction(1.8,'vomit',()=>{});
+    setTimeout(()=>{if(!playS('splash',.5,1.6))sfx('splash');playS('hurt',.6,.7);hurt(15);hunger=Math.max(0,hunger-15);thirst=Math.max(0,thirst-20);const [wx,wy]=iso(p.x,p.y);for(let k=0;k<26;k++)parts.push({x:wx+(p.face||1)*6,y:wy-30,vx:(p.face||1)*(20+Math.random()*50),vy:-10+Math.random()*30,g:240,life:0,max:.7+Math.random()*.4,col:Math.random()<.5?'#8a9a3a':'#b0a050',s:2+Math.random()*2});
+      vomits.push({x:p.x+(p.face||1)*.35,y:p.y+.2,t:0});toast('Wymiotujesz. Tracisz zdrowie, jedzenie i wodę. Muchomorów się nie je!','bad');},500);}
+  if(P.t>22){poison=null;cv.style.filter='';toast('Mdłości mijają. Na szczęście.');return;}
+  const k=P.t<2?P.t/2*.3:P.t<9?.3+.7*(P.t-2)/7:P.t<12?1:Math.max(0,1-(P.t-12)/10);
+  cv.style.filter=`blur(${(k*3.2).toFixed(2)}px) saturate(${(1+k*.6).toFixed(2)}) hue-rotate(${(Math.sin(P.t*.7)*k*40).toFixed(1)}deg)`;}
+function poisonK(){if(!poison)return 0;const t=poison.t;return t<2?t/2*.3:t<9?.3+.7*(t-2)/7:t<12?1:Math.max(0,1-(t-12)/10);}
+function drawVomits(){for(const v of vomits){const [cx,cy]=iso(v.x,v.y),a=Math.min(1,(40-v.t)/8);ell(ctx,cx,cy,9,4,`rgba(130,140,50,${.75*a})`);ell(ctx,cx+4,cy+1,5,2.2,`rgba(170,160,70,${.7*a})`);ell(ctx,cx-2,cy-1,3,1,`rgba(255,255,220,${.3*a})`);}}
 const bogSinks=[];
 function updBogSink(dt){for(let i=bogSinks.length-1;i>=0;i--){const b=bogSinks[i];b.t+=dt;if(b.t>5.2)bogSinks.splice(i,1);}
   if(p.sinking){p.sinkT+=dt;p.path=[];if(p.sinkT>1.15&&!p.sinkFade){p.sinkFade=true;fade(true);}if(p.sinkT>1.6){p.sinking=false;p.sinkFade=false;p.x=BOGP.x0+BOG_PATH[0][0];p.y=BOGP.y0+BOGP.h;snapCam();fade(false);toast('Kamień zapadł się w błoto, a ty razem z nim! Wracasz na brzeg cały w mule.','bad');}}}
@@ -2290,6 +2314,7 @@ function useItem(k){
   if(k==='pit'){if(!tools.shovel){toolNeed('łopata');return;}startAction(1.6,'dig',()=>placeBuilding('pit'));sfx('dig');return;}
   if(k==='coconut'){inv.coconut--;invDirty=true;hunger=Math.min(100,hunger+8);drink(18,'Kokosowe mleko gasi pragnienie.');return;}
   if(k==='flask'){toast('Pusta manierka. Napełnij ją w strumieniu, źródle, stawie, łapaczu deszczówki albo w jaskini.');return;}
+  if(k==='shroom'){if(!(inv[k]>0))return;if(!flags.shroomWarn){flags.shroomWarn=1;toast('Czerwone z białymi kropkami… Na pewno? Stuknij jeszcze raz, by zjeść. Zielarka Wanda robi z nich napary.','bad');return;}inv[k]--;invDirty=true;sfx('eat');hunger=Math.min(100,hunger+6);startPoison();return;}
   if(FOOD[k]){if(!(inv[k]>0))return;if(hunger>=99){toast('Nie jesteś głodny');return;}inv[k]--;hunger=Math.min(100,hunger+FOOD[k]);invDirty=true;sfx('eat');gainXp('surv',1);floatText(Math.round(p.x),Math.round(p.y),`+${FOOD[k]} sytości`,'#c8f59c');
     if(k==='fish'||k==='meat')toast('Surowe słabo syci. Upiecz przy ognisku albo uwędź.');return;}
   if(k==='potion'){if(hp>=100){toast('Jesteś zdrowy jak ryba');return;}inv.potion--;hp=Math.min(100,hp+50);invDirty=true;sfx('eat');floatText(Math.round(p.x),Math.round(p.y),'+50 zdrowia','#ff9aa6');return;}
@@ -2635,6 +2660,7 @@ function drawIcon(c,k){
     case'stone':c.fillStyle='#8d877c';c.beginPath();c.moveTo(6,28);c.lineTo(11,14);c.lineTo(24,9);c.lineTo(34,18);c.lineTo(33,30);c.lineTo(18,33);c.closePath();c.fill();c.fillStyle='#bdb7aa';c.beginPath();c.moveTo(11,14);c.lineTo(24,9);c.lineTo(34,18);c.lineTo(20,20);c.closePath();c.fill();c.fillStyle='#69645b';c.beginPath();c.moveTo(20,20);c.lineTo(34,18);c.lineTo(33,30);c.lineTo(18,33);c.closePath();c.fill();break;
     case'fiber':c.strokeStyle='#8fb944';c.lineWidth=2.2;for(let i=0;i<6;i++){c.beginPath();c.moveTo(18+i,35);c.quadraticCurveTo(14+i*2,18,8+i*5,5+(i%2)*3);c.stroke();}c.fillStyle='#c9a46a';c.fillRect(14,24,14,4);break;
     case'berries':ell(c,22,10,6,3,'#4f9a3a');[[14,22],[25,20],[19,30],[28,30]].forEach(([x,y])=>{circ(c,x,y,6.2,'#c41f43');circ(c,x-2,y-2,1.8,'#ffb0bd');});break;
+    case'bolete':c.fillStyle='#e8dcc0';c.beginPath();c.moveTo(14,36);c.quadraticCurveTo(11,26,15,19);c.lineTo(25,19);c.quadraticCurveTo(29,26,26,36);c.closePath();c.fill();{const g=c.createRadialGradient(16,10,1,20,16,14);g.addColorStop(0,'#b0703e');g.addColorStop(1,'#5e3418');c.fillStyle=g;c.beginPath();c.ellipse(20,19,15,11,0,Math.PI,0);c.fill();}ell(c,20,19,15,3,'#d8c890');ell(c,15,12,4,1.6,'rgba(255,230,200,.35)');break;
     case'shroom':c.fillStyle='#efe6d0';c.fillRect(17,18,6,16);c.fillStyle='#c2412c';c.beginPath();c.ellipse(20,19,14,10,0,Math.PI,0);c.fill();ell(c,20,19,14,3,'#e9d9b8');circ(c,14,13,2,'#fff');circ(c,24,11,1.6,'#fff');circ(c,27,16,1.3,'#fff');break;
     case'fish':case'cooked':{const col=k==='fish'?'#6fa6c9':'#c4742c';c.fillStyle=col;c.beginPath();c.ellipse(18,20,12,7,0,0,Math.PI*2);c.fill();c.beginPath();c.moveTo(28,20);c.lineTo(37,12);c.lineTo(36,28);c.closePath();c.fill();
       c.fillStyle=k==='fish'?'#d6ecf3':'#e5a45e';c.beginPath();c.ellipse(17,23,9,3.2,0,0,Math.PI*2);c.fill();circ(c,11,18,1.7,'#1c1c1c');
@@ -3105,7 +3131,7 @@ function onTap(sx,sy){
 
 
 function drawGroundFx(ts,inView){
-  drawBogSinks(ts);
+  drawBogSinks(ts);drawVomits();
   // puddles
   if(wet>.04&&!lv.def.cave){for(let y=0;y<H;y++)for(let x=0;x<W;x++){if(hash(x,y,55)>.1)continue;const t=T[idx(x,y)];if(t!==GRASS&&t!==PATH&&t!==SAND&&t!==ASH)continue;const [cx,cy]=iso(x,y);if(!inView(cx,cy))continue;const ox=(hash(x,y,56)-.5)*20,oy=(hash(x,y,57)-.5)*8,rx=7+hash(x,y,58)*9;
     ell(ctx,cx+ox,cy+oy,rx*wet,rx*.45*wet,WX.type==='acid'?`rgba(140,170,60,${.45*wet})`:`rgba(70,90,110,${.45*wet})`);ell(ctx,cx+ox-rx*.25*wet,cy+oy-1,rx*.4*wet,rx*.12*wet,`rgba(255,255,255,${.25*wet})`);
@@ -3227,7 +3253,7 @@ function update(dt){
     if(o.anim)o.anim=Math.max(0,o.anim-dt*5);
     if(o.spin)o.spin=Math.max(0,o.spin-dt*4);
     if(o.regrow>0){o.regrow-=dt;if(o.regrow<=0){o.regrow=0;
-      if(o.type==='tuft'||o.type==='reed'||o.type==='shroom'||o.type==='cactus')o.cut=false;else if(o.type==='bush')o.berries=true;
+      if(o.type==='tuft'||o.type==='reed'||o.type==='shroom'||o.type==='bolete'||o.type==='cactus')o.cut=false;else if(o.type==='bush')o.berries=true;
       else if(o.type==='stump'){if(Math.round(p.x)===o.x&&Math.round(p.y)===o.y)o.regrow=10;else{o.type=o.kind;o.hp=3;}}}}
     if(o.type==='smoker'&&o.load>0){o.t-=dt;if(Math.random()<dt*5){const [wx,wy]=iso(o.x,o.y);parts.push({x:wx+3,y:wy-46,vx:(Math.random()-.5)*8,vy:-22,g:-4,life:0,max:2,col:'rgba(210,210,210,.5)',s:5});}if(o.t<=0){o.ready+=o.load;o.load=0;toast('Wędzonka gotowa! Odbierz ją z wędzarni.','good');}}
     if(o.type==='pen'&&o.animals.length){o.timer+=dt;if(o.timer>=40){o.timer=0;for(const a of o.animals){if(o.stock.meat+o.stock.hide>=12)break;if(a.kind==='boar')o.stock.meat+=2;else if(Math.random()<.5)o.stock.meat++;else o.stock.hide++;}}}
@@ -3235,7 +3261,7 @@ function update(dt){
   }
   for(let i=respawns.length-1;i>=0;i--){const r=respawns[i];r.t-=dt;if(r.t<=0){if(!grid[idx(r.x,r.y)]&&!(Math.round(p.x)===r.x&&Math.round(p.y)===r.y)){put(r.type,r.x,r.y,r.extra||{});respawns.splice(i,1);}else r.t=20;}}
   if(p.stun>0){p.stun-=dt;p.path=[];p.moving=false;}else updCombat(dt);
-  updBogSink(dt);
+  updBogSink(dt);updPoison(dt);
   if(p.action){p.action.t+=dt;if(p.action.t>=p.action.dur){const a=p.action;p.action=null;a.done();}p.moving=false;}
   else if(p.path.length){const [nx,ny]=p.path[0],dx=nx-p.x,dy=ny-p.y,d=Math.hypot(dx,dy);const tt=T[idx(Math.round(p.x),Math.round(p.y))];const sp=(hunger<=0?2.1:3.3)*moveMul(p.x,p.y)*(lv.def.space?1.12:1)*dt;void tt;
     const r2=rd(dx,dy),sdx=r2[0]-r2[1],sdy=r2[0]+r2[1];{const n=Math.hypot(sdx,sdy)||1;if(!p.sv)p.sv=[sdx/n,sdy/n];const k=Math.min(1,dt*6);p.sv[0]+=(sdx/n-p.sv[0])*k;p.sv[1]+=(sdy/n-p.sv[1])*k;setView(p.sv[0],p.sv[1]);}
@@ -3270,7 +3296,7 @@ function render(ts){
   if(titleOn){const t2=ts/1000,[cx0,cy0]=iso(W*.5,H*.52);cam.x=cx0+Math.cos(t2*.045)*W*7;cam.y=cy0-30+Math.sin(t2*.06)*H*3.2;}
   ctx.setTransform(DPR,0,0,DPR,0,0);ctx.fillStyle=lv.def.cave?'#040508':lv.def.space?'#02030a':seaCol();ctx.fillRect(0,0,VW,VH);
   if(lv.def.space)drawSpaceBg(ts);
-  const shk=SET.shake&&!titleOn?1:0,shx=shakeT>0?(Math.random()-.5)*shakeT*14*shk:0,shy=shakeT>0?(Math.random()-.5)*shakeT*10*shk:0;
+  const shk=SET.shake&&!titleOn?1:0,pk=poisonK(),shx=(shakeT>0?(Math.random()-.5)*shakeT*14*shk:0)+Math.sin(ts/700)*pk*16,shy=(shakeT>0?(Math.random()-.5)*shakeT*10*shk:0)+Math.cos(ts/900)*pk*9;
   ctx.setTransform(DPR*S,0,0,DPR*S,DPR*(VW/2-cam.x*S+shx),DPR*(VH/2-cam.y*S+shy));
   const hw=VW/2/S,hh=VH/2/S,vx0=cam.x-hw-90,vx1=cam.x+hw+90,vy0=cam.y-hh-150,vy1=cam.y+hh+110;
   const inView=(cx,cy)=>cx>vx0&&cx<vx1&&cy>vy0&&cy<vy1;
@@ -3321,7 +3347,7 @@ function render(ts){
   hitList.length=0;crHit.length=0;let pIdx=-1,occl=false;
   const playerOpts=a=>{const act=p.action,mv=p.moving&&!act,hurtK=Math.max(0,(p.hurtT||0)/.35),fallK=fainting&&p.faintAt?Math.min(1,(performance.now()-p.faintAt)/420):0,ph=p.walkT*(lv.def.space?7:11);const o={st:playerStyle(),face:p.face,back:p.back,view:p.view,step:mv?Math.sin(ph):0,bob:mv?Math.abs(Math.cos(ph))*(lv.def.space?7:1.6):Math.sin(ts*2.2)*.5,ang:.25+(mv?Math.sin(ph)*.45:0),t:ts,light:p.lightOn?(tools.lantern?'lantern':'torch'):null,alpha:a,hurt:hurtK,fall:fallK};
     if(act){const pr=act.t/act.dur;if(act.kind==='chop'||act.kind==='mine'){const cyc=(pr*2)%1;o.ang=cyc<.6?-2.5+cyc/.6*.4:-2.1+((cyc-.6)/.4)*2.7;o.tool=act.kind==='chop'?'axe':'pick';}
-      else if(act.kind==='dig'){o.tool='shovel';o.ang=-1.2+Math.sin(pr*Math.PI*4)*.9;}else if(act.kind==='pick'){o.ang=.9+Math.sin(pr*Math.PI)*.8;o.kneel=Math.min(1,Math.sin(pr*Math.PI)*1.6);}else if(act.kind==='touch')o.ang=.9+Math.sin(pr*Math.PI)*.8;else if(act.kind==='scan'){o.tool='scanner';o.ang=-1.3+Math.sin(pr*Math.PI*4)*.08;}else if(act.kind==='fish')o.ang=-1.1;
+      else if(act.kind==='dig'){o.tool='shovel';o.ang=-1.2+Math.sin(pr*Math.PI*4)*.9;}else if(act.kind==='pick'){o.ang=.9+Math.sin(pr*Math.PI)*.8;o.kneel=Math.min(1,Math.sin(pr*Math.PI)*1.6);}else if(act.kind==='touch')o.ang=.9+Math.sin(pr*Math.PI)*.8;else if(act.kind==='vomit'){o.kneel=Math.min(1,pr*3);o.hurt=.8;o.ang=-.6;}else if(act.kind==='scan'){o.tool='scanner';o.ang=-1.3+Math.sin(pr*Math.PI*4)*.08;}else if(act.kind==='fish')o.ang=-1.1;
       else if(act.kind==='strike'){o.ang=-2.4+pr*3;o.tool=swordKey();}else if(act.kind==='shoot'){o.ang=-1.55;o.tool=tools.emitter?'emitter':'bow';}}
     else if(p.target){const far=Math.hypot(p.target.x-p.x,p.target.y-p.y)>1.5;o.tool=far&&tools.emitter?'emitter':far&&tools.bow&&(inv.arrow||0)>0?'bow':swordKey();o.ang=o.tool==='bow'||o.tool==='emitter'?-1.3:-.4;}
     return o;};
