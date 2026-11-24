@@ -137,6 +137,15 @@ button:focus-visible{outline:2px solid var(--rune);outline-offset:2px}
 .ctab{flex:1 0 auto;font:700 13.5px var(--fb);padding:8px 12px;border-radius:10px;border:0;background:transparent;color:var(--ink-dim);cursor:pointer;white-space:nowrap}
 .ctab.on{background:var(--amber);color:#2b1a05}.ctab:not(.on):hover{color:var(--ink);background:rgba(255,255,255,.06)}
 .cpane{min-height:300px}.cpane h3:first-child{margin-top:2px}
+.tut{display:flex;flex-direction:column;gap:10px}
+.tutcv{width:100%;aspect-ratio:16/9;border-radius:16px;background:#0e2a33;border:1px solid var(--line);display:block}
+.tut h2{margin:2px 0 0}.tut p{margin:0;min-height:3.2em}
+.tutdots{display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+.tutdots button{width:9px;height:9px;padding:0;border-radius:50%;border:0;background:rgba(255,255,255,.22);cursor:pointer}
+.tutdots button.on{background:var(--amber);width:22px;border-radius:5px}
+.tutnav{display:flex;gap:8px;justify-content:space-between;align-items:center}
+.tutnav .btn[disabled]{opacity:.35}
+.tutkey{display:inline-block;padding:1px 7px;border-radius:6px;border:1px solid var(--line);background:rgba(255,255,255,.07);font:700 12px var(--fb)}
 .cstep{font:600 12px var(--fb);color:var(--ink-dim);text-align:center;margin-top:2px}
 .wtabs{position:sticky;top:-2px;z-index:2;backdrop-filter:blur(6px);background:rgba(10,30,36,.85)}
 .wcnt{display:inline-block;min-width:18px;padding:0 5px;border-radius:9px;background:#5ad07a;color:#062a10;font:800 11px var(--fb);margin-left:3px}
@@ -2728,7 +2737,7 @@ function openIntro(){
   <div class="row">${saved?'<button class="btn" id="mCont">Kontynuuj</button><button class="btn ghost" id="mNew">Nowa gra</button>':'<button class="btn" id="mNew">Wyrusz</button>'}</div>`);
   const go=()=>{audioInit();$('#card').dataset.lock='';closeModal();};
   if(saved)$('#mCont').onclick=()=>{if(!load())newGame();snapCam();go();};
-  let armed=!saved;$('#mNew').onclick=e=>{if(!armed){armed=true;e.target.textContent='Na pewno? Stuknij';return;}audioInit();openCreator(true,()=>{newGame();applyArch();snapCam();save();toast(look.name?`Powodzenia, ${look.name}! Stuknij gałąź na piasku, by ją podnieść.`:'Stuknij gałąź leżącą na piasku, by ją podnieść.');setTimeout(()=>toast('Rybak Olek macha do ciebie z plaży.'),2500);});};
+  let armed=!saved;$('#mNew').onclick=e=>{if(!armed){armed=true;e.target.textContent='Na pewno? Stuknij';return;}audioInit();openCreator(true,()=>{newGame();applyArch();snapCam();save();toast(look.name?`Powodzenia, ${look.name}! Stuknij gałąź na piasku, by ją podnieść.`:'Stuknij gałąź leżącą na piasku, by ją podnieść.');setTimeout(()=>toast('Rybak Olek macha do ciebie z plaży.'),2500);if(!tutSeen())setTimeout(()=>openTutorial(0),600);});};
 }
 function openWin(){
   simpleModal(`Dzień ${dayNum()}`,'Latarnia znów płonie','<p>Snop światła przecina morze. Po chwili tuż pod latarnią przybija łódź kapitan Miry. Czeka, by zabrać cię na Wyspę Mgieł.</p><p>Stuknij łódź, gdy będziesz gotów. Możesz też zostać i dokończyć zadania Olka.</p>','Super');
@@ -2738,7 +2747,119 @@ function openEnd(){
 }
 $('#craftBtn').onclick=()=>{audioInit();openCraft();};
 $('#questBtn').onclick=()=>{audioInit();openQuests();};
-$('#helpBtn').onclick=()=>simpleModal('Jak grać','Krótko o wyspie',helpHTML(),'Jasne');
+/* ================= SAMOUCZEK ================= */
+const TUTK='archipelag-tut-v1';
+function tutSeen(){try{return localStorage.getItem(TUTK)==='1';}catch(e){return true;}}
+function tutMark(){try{localStorage.setItem(TUTK,'1');}catch(e){}}
+let tutOn=false,tutI=0,tutT0=0,tutRaf=0;
+const TW2=64,TH2=32;
+function tIso(ox,oy,gx,gy){return[ox+(gx-gy)*TW2/2,oy+(gx+gy)*TH2/2];}
+function tTile(c,ox,oy,gx,gy,col,side){const [x,y]=tIso(ox,oy,gx,gy);c.fillStyle=col;c.beginPath();c.moveTo(x,y-TH2/2);c.lineTo(x+TW2/2,y);c.lineTo(x,y+TH2/2);c.lineTo(x-TW2/2,y);c.closePath();c.fill();
+  c.strokeStyle='rgba(0,0,0,.06)';c.lineWidth=1;c.stroke();if(side){c.fillStyle=side[0];c.beginPath();c.moveTo(x-TW2/2,y);c.lineTo(x,y+TH2/2);c.lineTo(x,y+TH2/2+9);c.lineTo(x-TW2/2,y+9);c.closePath();c.fill();c.fillStyle=side[1];c.beginPath();c.moveTo(x+TW2/2,y);c.lineTo(x,y+TH2/2);c.lineTo(x,y+TH2/2+9);c.lineTo(x+TW2/2,y+9);c.closePath();c.fill();}}
+function tIsland(c,ox,oy,n,t,opt={}){const g=opt.g||['#6cb04a','#62a443'],sand='#e6cf98';
+  for(let s2=0;s2<2*n;s2++)for(let gx=0;gx<n;gx++){const gy=s2-gx;if(gy<0||gy>=n)continue;const edge=gx===n-1||gy===n-1||gx===0||gy===0;tTile(c,ox,oy,gx,gy,edge?sand:g[(gx+gy)%2],(gx===n-1||gy===n-1)?['#b89a62','#a0844e']:null);}}
+function tSea(c,w,h,t,col){c.fillStyle=col||'#1b6f8a';c.fillRect(0,0,w,h);c.strokeStyle='rgba(255,255,255,.14)';c.lineWidth=1.5;for(let i=0;i<14;i++){const y=(i*37+t*8)%h,x=(i*91)%w;c.beginPath();c.moveTo(x,y);c.lineTo(x+18,y);c.stroke();}}
+function tFinger(c,x,y,t,press){c.save();c.translate(x,y);const s2=press?.88:1;c.scale(s2,s2);if(press){c.strokeStyle='rgba(255,255,255,.8)';c.lineWidth=2;c.beginPath();c.arc(0,0,10+((t*3)%1)*14,0,6.28);c.stroke();}
+  c.fillStyle='#ffe2c4';c.strokeStyle='#3a2a20';c.lineWidth=1.5;c.beginPath();c.moveTo(-5,2);c.lineTo(-5,-16);c.quadraticCurveTo(-5,-21,0,-21);c.quadraticCurveTo(5,-21,5,-16);c.lineTo(5,0);c.lineTo(12,4);c.quadraticCurveTo(16,8,12,18);c.lineTo(-8,18);c.quadraticCurveTo(-12,10,-5,2);c.closePath();c.fill();c.stroke();c.restore();}
+function tIcon(c,k,x,y,sz){c.save();c.translate(x-sz/2,y-sz/2);c.scale(sz/40,sz/40);drawIcon(c,k);c.restore();}
+function tBar(c,x,y,w,v,col,ic){c.fillStyle='rgba(10,26,32,.85)';rr(c,x,y,w,26,13);c.fill();tIcon(c,ic,x+14,y+13,20);c.fillStyle='rgba(255,255,255,.12)';rr(c,x+28,y+9,w-38,8,4);c.fill();c.fillStyle=col;rr(c,x+28,y+9,(w-38)*clamp(v,0,1),8,4);c.fill();}
+function tLabel(c,x,y,txt,col){c.font='700 13px Nunito, sans-serif';const w=c.measureText(txt).width+16;c.fillStyle='rgba(10,26,32,.85)';rr(c,x-w/2,y-12,w,24,12);c.fill();c.fillStyle=col||'#f4ead2';c.textAlign='center';c.textBaseline='middle';c.fillText(txt,x,y+.5);c.textBaseline='alphabetic';}
+const ease=u=>u<.5?2*u*u:1-Math.pow(-2*u+2,2)/2;
+const lerp=(a,b,u)=>a+(b-a)*u;
+function tPlayer(c,x,y,t,o={}){drawPerson(c,x,y,Object.assign({st:styleOf(look||DEFLOOK),face:1,t},o));}
+
+const TUT=[
+ {k:'Witaj',h:'Rozbitek na archipelagu',p:'Sztorm wyrzucił cię na wyspę. Musisz przetrwać, rozwiązać zagadki wysp i odnaleźć drogę dalej: łodzią, a potem jeszcze dalej.',
+  d(c,w,h,t){tSea(c,w,h,t);const ox=w/2,oy=h/2-70;tIsland(c,ox,oy,5,t);const [px,py]=tIso(ox,oy,2,2);drawObj(c,{type:'palm',x:0,y:0,id:1},...tIso(ox,oy,1,3),t);drawObj(c,{type:'boat',x:0,y:0,id:2,wreck:true},...tIso(ox,oy,4,1),t);tPlayer(c,px,py,t,{bob:Math.sin(t*2)*.6});
+   c.save();c.globalAlpha=.6+.4*Math.sin(t*2);tLabel(c,px,py-86,'To ty!','#ffd98a');c.restore();}},
+ {k:'Ruch',h:'Stuknij, by iść',p:'Kliknij albo stuknij pole na mapie, a postać sama tam dojdzie. Podświetlone pole pokazuje, w co celujesz.',
+  d(c,w,h,t){tSea(c,w,h,t);const ox=w/2,oy=h/2-70;tIsland(c,ox,oy,5,t);const u=(t%4)/4;const A=tIso(ox,oy,1,1),B=tIso(ox,oy,3,3);
+   const k=u<.25?0:u<.85?ease((u-.25)/.6):1;const [px,py]=[lerp(A[0],B[0],k),lerp(A[1],B[1],k)];
+   c.strokeStyle=`rgba(255,217,138,${u<.85?.9:.3})`;c.lineWidth=2;c.beginPath();c.moveTo(B[0],B[1]-16);c.lineTo(B[0]+32,B[1]);c.lineTo(B[0],B[1]+16);c.lineTo(B[0]-32,B[1]);c.closePath();c.stroke();
+   if(u>.25&&u<.85){c.setLineDash([4,6]);c.strokeStyle='rgba(255,255,255,.5)';c.beginPath();c.moveTo(px,py);c.lineTo(B[0],B[1]);c.stroke();c.setLineDash([]);}
+   tPlayer(c,px,py,t,{step:u>.25&&u<.85?Math.sin(t*11):0,bob:u>.25&&u<.85?Math.abs(Math.cos(t*11))*1.6:0,face:1});
+   if(u<.3)tFinger(c,B[0]+6,B[1]+6,t,u>.12);}},
+ {k:'Zbieranie',h:'Podnoś i ścinaj',p:'Stuknij gałąź, kamień albo trawę, by je zebrać. Drzewa ścinasz siekierą, skały kruszysz kilofem. Zebrane rzeczy trafiają na pasek na dole.',
+  d(c,w,h,t){tSea(c,w,h,t);const ox=w/2-40,oy=h/2-80;tIsland(c,ox,oy,5,t);const u=(t%3.5)/3.5;const [bx,by]=tIso(ox,oy,3,2);const [px,py]=tIso(ox,oy,2,2);
+   if(u<.55)drawObj(c,{type:'branch',x:0,y:0,id:3},bx,by,t);
+   const kn=u>.2&&u<.55?Math.sin((u-.2)/.35*Math.PI):0;tPlayer(c,px,py,t,{kneel:kn,ang:.9+kn*.8});
+   if(u>.2&&u<.3)tFinger(c,bx+8,by+4,t,true);
+   c.fillStyle='rgba(10,26,32,.88)';rr(c,w-130,h-58,112,46,12);c.fill();const n=u>.62?2:1;
+   if(u>.55&&u<.75){const k=(u-.55)/.2;tIcon(c,'wood',lerp(bx,w-100,ease(k)),lerp(by-10,h-35,ease(k))-Math.sin(k*Math.PI)*40,26);}
+   tIcon(c,'wood',w-100,h-35,30);c.fillStyle='#fff';c.font='800 14px Nunito, sans-serif';c.textAlign='left';c.fillText('×'+n,w-80,h-26);
+   if(u>.62&&u<.9){c.save();c.globalAlpha=1-(u-.62)/.28;tLabel(c,w-74,h-72-(u-.62)*40,'+1 Drewno','#9fe8a0');c.restore();}}},
+ {k:'Warsztat',h:'Twórz narzędzia',p:'W Warsztacie (przycisk w prawym dolnym rogu) zrobisz siekierę, kilof, łuk, pochodnię i budowle. Zakładka „Gotowe” pokazuje, co zrobisz od razu.',
+  d(c,w,h,t){c.fillStyle='#163843';c.fillRect(0,0,w,h);const u=(t%4)/4;const cx2=w/2;
+   c.fillStyle='rgba(255,255,255,.06)';rr(c,cx2-170,30,340,h-60,16);c.fill();
+   const ing=[['wood','2'],['stone','2'],['fiber','1']];ing.forEach(([k,n],i)=>{const fly=u>.35?ease(clamp((u-.35-i*.05)/.3,0,1)):0;const x0=cx2-130+i*56,y0=h/2;const x=lerp(x0,cx2+90,fly),y=lerp(y0,h/2,fly)-Math.sin(fly*Math.PI)*30;
+    c.save();c.globalAlpha=1-fly*.9;tIcon(c,k,x,y,40);c.fillStyle='#fff';c.font='800 13px Nunito, sans-serif';c.textAlign='center';c.fillText('×'+n,x0+14,y0+30);c.restore();});
+   c.fillStyle='#f4ead2';c.font='800 26px Nunito, sans-serif';c.textAlign='center';c.fillText('→',cx2+30,h/2+9);
+   const done=u>.7;c.save();if(done){c.globalCompositeOperation='lighter';c.fillStyle=`rgba(255,217,138,${.35*(1-(u-.7)/.3)})`;c.beginPath();c.arc(cx2+100,h/2,46,0,6.28);c.fill();}c.restore();
+   c.save();c.globalAlpha=done?1:.35;tIcon(c,'axe',cx2+100,h/2,64);c.restore();
+   const bx=cx2+60,by=h-62;c.fillStyle=u>.25&&u<.4?'#ffcf6a':'#f3b23f';rr(c,bx,by,90,32,10);c.fill();c.fillStyle='#2b1a05';c.font='800 14px Nunito, sans-serif';c.fillText('Zrób',bx+45,by+21);
+   if(u>.15&&u<.42)tFinger(c,bx+50,by+20,t,u>.25);}},
+ {k:'Przetrwanie',h:'Życie, jedzenie i woda',p:'Paski u góry to zdrowie, sytość i nawodnienie. Jedz jagody, ryby i pieczone mięso. Pij czystą wodę: deszczówkę, przegotowaną albo z górskiej rzeki.',
+  d(c,w,h,t){c.fillStyle='#163843';c.fillRect(0,0,w,h);const u=(t%5)/5;const food=u<.35?lerp(.75,.35,u/.35):u<.5?lerp(.35,.9,(u-.35)/.15):lerp(.9,.8,(u-.5)/.5),water=u<.55?lerp(.7,.3,u/.55):u<.7?lerp(.3,.95,(u-.55)/.15):.95;
+   tBar(c,w/2-150,40,300,.9,'#e8505a','heart');tBar(c,w/2-150,76,300,food,'#f0a040','berries');tBar(c,w/2-150,112,300,water,'#4aa0e8','drop');
+   const by=h-60;tIcon(c,'berries',w/2-60,by,44);tIcon(c,'water',w/2+60,by,44);
+   if(u>.28&&u<.4)tFinger(c,w/2-52,by+8,t,u>.33);if(u>.48&&u<.6)tFinger(c,w/2+68,by+8,t,u>.53);
+   if(u>.35&&u<.5){c.save();c.globalAlpha=1-(u-.35)/.15;tLabel(c,w/2-60,by-40,'Mniam!','#ffd98a');c.restore();}
+   if(u>.55&&u<.7){c.save();c.globalAlpha=1-(u-.55)/.15;tLabel(c,w/2+60,by-40,'Chlust!','#9fd8ff');c.restore();}}},
+ {k:'Noc',h:'Noc, ogień i światło',p:'Nocą robi się ciemno i wychodzą nocne mary. Boją się światła: zrób pochodnię, rozpal ognisko albo schowaj się w szałasie. Pochodnia zapala się sama, gdy jest ciemno.',
+  d(c,w,h,t){tSea(c,w,h,t,'#123a4c');const ox=w/2,oy=h/2-70;tIsland(c,ox,oy,5,t);const [px,py]=tIso(ox,oy,2,2);const u=(t%5)/5;
+   const lit=u>.35;const mx=lerp(w/2+150,lit?w/2+170:w/2+70,lit?ease(clamp((u-.35)/.3,0,1)):u/.35),my=py-10;
+   drawMara(c,mx,my,{x:0,y:0,ph:t*3,flash:0,face:-1,hp:2,mv:true,t:0,alpha:1,seed:1,lunge:0},t);
+   tPlayer(c,px,py,t,{light:lit?'torch':null});
+   if(!window._tDk){window._tDk=document.createElement('canvas');_tDk.width=w*2;_tDk.height=h*2;}const dc=_tDk.getContext('2d');dc.setTransform(2,0,0,2,0,0);dc.globalCompositeOperation='source-over';dc.clearRect(0,0,w,h);dc.fillStyle='rgba(6,10,30,.72)';dc.fillRect(0,0,w,h);if(lit){dc.globalCompositeOperation='destination-out';const g=dc.createRadialGradient(px,py-30,10,px,py-30,130+Math.sin(t*9)*4);g.addColorStop(0,'rgba(0,0,0,1)');g.addColorStop(1,'rgba(0,0,0,0)');dc.fillStyle=g;dc.fillRect(0,0,w,h);}c.save();c.setTransform(1,0,0,1,0,0);c.drawImage(_tDk,0,0);c.restore();if(lit){c.save();c.globalCompositeOperation='lighter';const g2=c.createRadialGradient(px,py-30,5,px,py-30,90);g2.addColorStop(0,'rgba(255,170,80,.25)');g2.addColorStop(1,'rgba(255,170,80,0)');c.fillStyle=g2;c.fillRect(0,0,w,h);c.restore();}
+   c.fillStyle='rgba(180,220,255,.85)';c.beginPath();c.arc(mx-6,my-40,2.2,0,6.28);c.arc(mx+4,my-40,2.2,0,6.28);c.fill();
+   if(lit&&u<.6){c.save();c.globalAlpha=1-(u-.35)/.25;tLabel(c,mx,my-70,'Ucieka!','#ffd98a');c.restore();}}},
+ {k:'Walka',h:'Polowanie i obrona',p:'Stuknij zwierzę albo wroga, a postać zaatakuje mieczem lub z łuku, jeśli masz strzały. Zanim silny wróg uderzy, unosi broń: wtedy odskocz.',
+  d(c,w,h,t){tSea(c,w,h,t);const ox=w/2,oy=h/2-70;tIsland(c,ox,oy,5,t);const [px,py]=tIso(ox,oy,1,2),[bx,by]=tIso(ox,oy,3,2);const u=(t%2.4)/2.4;
+   const sw=u<.4?u/.4:0;const hit=u>.3&&u<.45;drawBoar(c,bx+(hit?6:0),by,{x:0,y:0,ph:t*2,flash:hit?.1:0,face:-1,mv:false,anger:1,bite:0},t);
+   tPlayer(c,px,py,t,{tool:swordKey()||'sword',ang:u<.4?-2.4+sw*3:-.4});
+   if(hit){c.save();c.globalAlpha=1-(u-.3)/.15;tLabel(c,bx,by-60,'-2','#ff8a7a');c.restore();}
+   if(u<.18)tFinger(c,bx+10,by-6,t,u>.08);}},
+ {k:'Zagadki',h:'Świecące miejsca i zadania',p:'Miejsca związane z zagadką lekko świecą: tablice, ołtarze, płyty. Postacie z wykrzyknikiem „!” mają dla ciebie zadania. Listę zadań i celów znajdziesz pod przyciskiem „Zadania”.',
+  d(c,w,h,t){tSea(c,w,h,t);const ox=w/2,oy=h/2-70;tIsland(c,ox,oy,5,t);const [sx,sy]=tIso(ox,oy,1,3),[nx,ny]=tIso(ox,oy,3,1);
+   c.save();c.globalCompositeOperation='lighter';const pl=.25+.2*Math.sin(t*3);c.fillStyle=`rgba(255,217,138,${pl})`;c.beginPath();c.ellipse(sx,sy,34,17,0,0,6.28);c.fill();c.restore();
+   drawObj(c,{type:'stela',x:0,y:0,id:4,k:0},sx,sy,t);drawPerson(c,nx,ny,{st:STY.olek,face:-1,t,bob:Math.sin(t*2)*.6});c.save();c.globalAlpha=1;const my=ny-74+Math.sin(t*3)*2.5;circ(c,nx,my,12,'#f3b23f');c.fillStyle='#2b1a05';c.font='900 16px Nunito, sans-serif';c.textAlign='center';c.fillText('!',nx,my+6);c.restore();
+   const [px,py]=tIso(ox,oy,2,2);tPlayer(c,px,py,t);}},
+ {k:'Kamera',h:'Rozglądaj się',p:'<span class="tutkey">Rolka</span> przybliża, a <span class="tutkey">wciśnięta rolka</span> przesuwa mapę. <span class="tutkey">Q</span>/<span class="tutkey">E</span> lub ⟲ ⟳ obracają kamerę. Przycisk <b>⌖ Do postaci</b> albo <span class="tutkey">C</span> wraca do ciebie. Na telefonie: dwa palce.',
+  d(c,w,h,t){tSea(c,w,h,t);const u=(t%6)/6;const pan=u<.4?Math.sin(u/.4*Math.PI)*70:0,zoom=u>.45&&u<.8?1+.35*Math.sin((u-.45)/.35*Math.PI):1;
+   c.save();c.translate(w/2,h/2);c.scale(zoom,zoom);c.translate(-w/2-pan,-h/2+pan*.3);const ox=w/2,oy=h/2-70;tIsland(c,ox,oy,5,t);drawObj(c,{type:'oak',x:0,y:0,id:5},...tIso(ox,oy,3,1),t);const [px,py]=tIso(ox,oy,2,2);tPlayer(c,px,py,t);c.restore();
+   const mx=w-70,my=h-80;c.fillStyle='#e8ecf0';rr(c,mx-18,my-28,36,56,18);c.fill();c.strokeStyle='#8a929e';c.lineWidth=1.5;c.beginPath();c.moveTo(mx,my-28);c.lineTo(mx,my-6);c.stroke();
+   c.fillStyle=u<.4||(u>.45&&u<.8)?'#f3b23f':'#5a606c';rr(c,mx-3,my-22,6,12,3);c.fill();
+   tLabel(c,mx,my+46,u<.4?'Przesuwanie':u>.45&&u<.8?'Przybliżanie':'Rolka','#ffd98a');
+   if(u>.82){c.fillStyle='rgba(10,26,32,.9)';rr(c,w/2-70,h-50,140,36,18);c.fill();c.strokeStyle='#f3b23f';c.lineWidth=1.5;c.stroke();c.fillStyle='#f4ead2';c.font='700 14px Nunito, sans-serif';c.textAlign='center';c.fillText('⌖ Do postaci',w/2,h-27);}}},
+ {k:'Podróże',h:'Łódź i kamienny pierścień',p:'Gdy rozwiążesz zagadki wyspy, kapitan Mira zabierze cię łodzią dalej. Później trafisz na kamienny pierścień: w terminalu obok wybierasz adres z czterech znaków i przechodzisz na inne światy.',
+  d(c,w,h,t){tSea(c,w,h,t);const u=(t%6)/6;
+   if(u<.5){const k=u/.5;const a=tIso(w*.2,h*.45,0,0);c.save();c.globalAlpha=.9;tIsland(c,w*.18,h*.3,3,t);tIsland(c,w*.7,h*.32,3,t,{g:['#cfd8e2','#e6edf3']});c.restore();
+     const bx=lerp(w*.27,w*.72,ease(k)),by=lerp(h*.62,h*.66,ease(k))+Math.sin(t*3)*2;drawObj(c,{type:'boat',x:0,y:0,id:6},bx,by,t);}
+   else{const k=(u-.5)/.5;c.fillStyle='rgba(20,10,40,.4)';c.fillRect(0,0,w,h);const pg={type:'portal',x:0,y:0,id:7};const save=dialS;
+     dialS={t:k*(DIALT*4+1.5),id:8,seq:[5,0,7,2],o:pg,n:4};drawPortal(c,w/2,h/2+70,pg,t);dialS=save;}
+   tLabel(c,w/2,26,u<.5?'Łodzią na kolejną wyspę':'Pierścień: inne światy','#ffd98a');}},
+ {k:'Postać',h:'Twoja postać rośnie',p:'Kliknij swój awatar w lewym górnym rogu. Zobaczysz umiejętności: rosną, gdy coś robisz, i dają premie. Tam też zmienisz wygląd. Gra zapisuje się sama.',
+  d(c,w,h,t){c.fillStyle='#163843';c.fillRect(0,0,w,h);const u=(t%5)/5;c.save();c.beginPath();c.arc(70,62,34,0,6.28);c.clip();c.translate(36,28);c.scale(.68,.68);drawPortrait(c,styleOf(look||DEFLOOK),'#2e5a64');c.restore();
+   c.strokeStyle='#f3b23f';c.lineWidth=3;c.beginPath();c.arc(70,62,34,0,6.28);c.stroke();if(u<.2)tFinger(c,84,76,t,u>.1);
+   const sk=[['Zbieranie','#9fe8a0'],['Ciosanie','#f0c070'],['Polowanie','#ff9a7a'],['Walka','#c8a8ff']];sk.forEach(([n,col],i)=>{const y=40+i*40,x=150;const v=clamp(.15+i*.12+(u>.25?(u-.25)*.9:0),0,1);
+     c.fillStyle='#f4ead2';c.font='700 14px Nunito, sans-serif';c.textAlign='left';c.fillText(n,x,y+5);c.fillStyle='rgba(255,255,255,.12)';rr(c,x+100,y-5,w-x-130,12,6);c.fill();c.fillStyle=col;rr(c,x+100,y-5,(w-x-130)*v,12,6);c.fill();});
+   if(u>.7){c.save();c.globalAlpha=Math.min(1,(u-.7)*6);tLabel(c,w/2+60,h-26,'Nowy poziom!','#ffd98a');c.restore();}}},
+];
+function openTutorial(start){tutOn=true;tutI=clamp(start||0,0,TUT.length-1);$('#card').dataset.lock='';renderTut();}
+function renderTut(){const s2=TUT[tutI],last=tutI===TUT.length-1;
+  openModal(`<button class="close" id="mClose" aria-label="Zamknij samouczek">×</button><div class="tut"><div class="kick">Samouczek · ${tutI+1} z ${TUT.length} · ${s2.k}</div><h2>${s2.h}</h2>
+  <canvas class="tutcv" id="tutCv" width="1120" height="630" aria-label="Animacja: ${s2.h}"></canvas><p>${s2.p}</p>
+  <div class="tutdots">${TUT.map((x,i)=>`<button aria-label="Krok ${i+1}: ${x.k}" class="${i===tutI?'on':''}" data-ti="${i}"></button>`).join('')}</div>
+  <div class="tutnav"><button class="btn ghost" id="tPrev" ${tutI===0?'disabled':''}>‹ Wróć</button>${last?'<button class="btn ghost sm" id="tMore">Ściągawka</button>':'<button class="btn ghost sm" id="tSkip">Pomiń</button>'}<button class="btn" id="tNext">${last?'Do gry!':'Dalej ›'}</button></div></div>`);
+  $('#card').classList.add('wide');tutT0=performance.now();
+  const end=()=>{tutOn=false;tutMark();closeModal();};
+  $('#mClose').onclick=end;const sk=$('#tSkip');if(sk)sk.onclick=end;const mo=$('#tMore');if(mo)mo.onclick=()=>{tutOn=false;tutMark();simpleModal('Ściągawka','Wszystko w jednym miejscu',helpHTML(),'Jasne');};
+  $('#tPrev').onclick=()=>{if(tutI>0){tutI--;playS('pick',.3);renderTut();}};
+  $('#tNext').onclick=()=>{if(last){end();return;}tutI++;playS('pick',.3);renderTut();};
+  $('#card').querySelectorAll('[data-ti]').forEach(b=>b.onclick=()=>{tutI=+b.dataset.ti;renderTut();});
+  cancelAnimationFrame(tutRaf);const loop=()=>{if(!tutOn||$('#modal').hidden){tutOn=false;return;}const cv2=$('#tutCv');if(cv2){const c=cv2.getContext('2d');c.setTransform(2,0,0,2,0,0);c.clearRect(0,0,560,315);try{TUT[tutI].d(c,560,315,(performance.now()-tutT0)/1000);}catch(e){console.warn(e);}}tutRaf=requestAnimationFrame(loop);};tutRaf=requestAnimationFrame(loop);}
+document.addEventListener('keydown',e=>{if(!tutOn)return;if(e.key==='ArrowRight'){$('#tNext').click();e.stopPropagation();}else if(e.key==='ArrowLeft'){$('#tPrev').click();e.stopPropagation();}},true);
+$('#helpBtn').onclick=()=>{audioInit();openTutorial(0);};
 $('#ctxBtn').onclick=()=>{audioInit();resetSoko();};
 let zoomMul=1;function applyZoom(){S=clamp(Math.min(VW,VH)/520,.72,1.25)*zoomMul;}$('#zin').onclick=()=>{zoomMul=clamp(zoomMul*1.15,.5,2);applyZoom();};$('#zout').onclick=()=>{zoomMul=clamp(zoomMul/1.15,.5,2);applyZoom();};
 
