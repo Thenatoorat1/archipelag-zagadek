@@ -91,6 +91,7 @@ button:focus-visible{outline:2px solid var(--rune);outline-offset:2px}
 .sndBtn{pointer-events:auto;flex:0 0 auto;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--panel);color:var(--ink);display:grid;place-items:center;cursor:pointer;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);box-shadow:0 4px 14px rgba(0,0,0,.25);transition:transform .15s,color .2s,border-color .2s}
 .sndBtn:hover{transform:scale(1.06);border-color:var(--amber)}.sndBtn .off{display:none}.sndBtn.muted{color:#ff9a8a;border-color:rgba(255,120,100,.5)}.sndBtn.muted .on{display:none}.sndBtn.muted .off{display:inline}
 @media (max-width:520px){.sndBtn{width:38px;height:38px}}
+.btn.warn{background:linear-gradient(180deg,#ff9a7a,#e8654a);color:#2a0a04;border-color:#ffb8a0}
 #musBtn.off{opacity:.45;text-decoration:line-through}
 #modal{position:fixed;inset:0;z-index:5;display:grid;place-items:center;padding:16px;background:rgba(5,16,22,.55);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
 .card{width:min(460px,100%);max-height:86vh;overflow:auto;background:linear-gradient(180deg,#1a414a,#10282e);border:1px solid var(--line);border-radius:22px;padding:20px 18px 18px;box-shadow:0 24px 70px rgba(0,0,0,.55)}
@@ -731,7 +732,7 @@ function spawnCamp(force){if(lv.id!==8)return;const n=crit.filter(c=>c.kind==='m
   if(force&&!flags.wardenDead&&!crit.some(c=>c.kind==='warden')){const q=freeSpot(CAMP[0],CAMP[1]);if(q)crit.push({kind:'warden',x:q[0],y:q[1],home:q.slice(),hp:30,maxHp:30,st:'idle',t:0,face:1,cd:1,ph:0,flash:0,mv:false,wind:0,dir:1});}}
 function placeExtras3(id){if(flags['xe'+id])return;flags['xe'+id]=1;const P=(t,x,y,e)=>{const q=freeSpot(x,y);if(q)put(t,q[0],q[1],e);};if(id===4)P('npc',23,33,{who:'torvak'});if(id===1)P('npc',21,20,{who:'veda'});}
 function termN(){return flags['term'+lv.id]||0;}
-function ensureBoat(){if(lv.id!==0||!beacon.lit)return;for(const b of objs.filter(o=>o.type==='boat'&&(o.x!==lv.boat[0]||o.y!==lv.boat[1])))removeObj(b);if(objs.some(o=>o.type==='boat'))return;const [lx,ly]=lv.boatLand,o=grid[idx(lx,ly)];if(o&&BLOCK[o.type])removeObj(o);put('boat',lv.boat[0],lv.boat[1]);}
+function ensureBoat(arrive){if(lv.id!==0||!beacon.lit)return;for(const b of objs.filter(o=>o.type==='boat'&&(o.x!==lv.boat[0]||o.y!==lv.boat[1])))removeObj(b);if(objs.some(o=>o.type==='boat'))return;const [lx,ly]=lv.boatLand,o=grid[idx(lx,ly)];if(o&&BLOCK[o.type])removeObj(o);put('boat',lv.boat[0],lv.boat[1],arrive?{arrive:{t:0,dur:11}}:undefined);if(arrive){setTimeout(()=>{toast('Z morskiej mgły dobiega dźwięk rogu… Ktoś zobaczył światło latarni!','rune');tone(98,1.6,'sawtooth',.05);tone(147,1.6,'sawtooth',.035,0,.05);},700);}}
 
 /* ================= TERRAIN ================= */
 let terrain,TX0,TY0;const RS=1.5;let waterTiles=[],foam=[],riverTiles=[];
@@ -1218,7 +1219,12 @@ function fenceLine(c,ax,ay,bx,by){
   for(const h of [6,13]){c.strokeStyle='#9a6d42';c.lineWidth=2.6;c.beginPath();pts.forEach(([x,y],i)=>i?c.lineTo(x,y-h):c.moveTo(x,y-h));c.stroke();}
 }
 function drawPenFloor(c,o){const [cx,cy]=iso(o.x,o.y);diamond(c,cx,cy,HW*3-4,HH*3-2,'rgba(196,160,80,.35)');for(let i=0;i<14;i++){const u=hash(o.id,i,3)*2-1,v=hash(i,o.id,4)*2-1;if(Math.abs(u)+Math.abs(v)>.9)continue;c.strokeStyle='rgba(230,200,110,.6)';c.lineWidth=1;c.beginPath();const x=cx+u*80,y=cy+v*40;c.moveTo(x-3,y);c.lineTo(x+3,y-1);c.stroke();}}
+function boatFog(c,x,y,a,t,n){c.save();for(let i=0;i<n;i++){const ph=i*1.7+t*.15,fx=x+Math.cos(ph)*(40+i*14)+Math.sin(t*.3+i)*10,fy=y+Math.sin(ph*1.3)*(14+i*5)-10;const g=c.createRadialGradient(fx,fy,4,fx,fy,60+i*8);g.addColorStop(0,`rgba(225,236,240,${a})`);g.addColorStop(1,'rgba(225,236,240,0)');c.fillStyle=g;c.beginPath();c.ellipse(fx,fy,70+i*10,34+i*4,0,0,6.28);c.fill();}c.restore();}
 function drawBoat(c,cx,cy,o,t){
+  if(o.arrive){const k=clamp(o.arrive.t/o.arrive.dur,0,1),e=1-Math.pow(1-k,2.2);const [lx,ly]=LV[0]&&LV[0].boatLand||[o.x,o.y-1];let vx=o.x-lx,vy=o.y-ly;const n=Math.hypot(vx,vy)||1;vx/=n;vy/=n;const dist=10*(1-e);const [ox,oy]=isoV(vx*dist,vy*dist);
+    const sx=cx+ox,sy=cy+oy;boatFog(c,sx,sy,.42*(1-k*.85),t,5);c.save();c.globalAlpha*=clamp(k*3,0,1);drawBoat(c,sx,sy,{x:o.x,y:o.y,id:o.id},t);c.restore();
+    c.strokeStyle=`rgba(255,255,255,${.35*(1-k)})`;c.lineWidth=1.5;c.beginPath();c.moveTo(sx,sy+6);c.lineTo(sx+ox*.25,sy+oy*.25+6);c.stroke();
+    boatFog(c,sx,sy+8,.22*(1-k),t+3,3);return;}
   const b=Math.sin(t*1.4+o.x)*1.8,y0=cy+b;
   c.strokeStyle='rgba(255,255,255,.22)';c.lineWidth=1.5;const rp=(t*.6)%1;c.beginPath();c.ellipse(cx,cy+4,40+rp*14,13+rp*5,0,0,Math.PI*2);c.stroke();
   const hull=(dy,col,sc)=>{c.save();c.translate(cx,y0+dy);c.scale(1,.5);c.rotate(Math.PI/4);c.scale(sc,sc);c.beginPath();c.moveTo(-32,0);c.quadraticCurveTo(-30,-13,0,-13);c.lineTo(22,-12);c.quadraticCurveTo(40,-6,46,0);c.quadraticCurveTo(40,6,22,12);c.lineTo(0,13);c.quadraticCurveTo(-30,13,-32,0);c.closePath();c.fillStyle=col;c.fill();c.restore();};
@@ -2087,7 +2093,7 @@ function interact(o){
     case'boulder':if(puz.soko.solved){toast('Głazy spoczywają w kręgach.');return;}near(o,0,()=>pushBoulder(o),true);break;
     case'pillar':case'gpillar':toast('Pradawna kolumna porośnięta bluszczem.');break;
     case'beacon':near(o,1,()=>beaconTap());break;
-    case'boat':near(o,1,()=>openBoat());break;
+    case'boat':if(o.arrive){toast('Łódź dopiero wyłania się z mgły. Poczekaj, aż przybije do brzegu.');return;}near(o,1,()=>openBoat());break;
     case'npc':if(o.who==='torvak'&&flags.duelOn)return;near(o,1,()=>openNpc(o.who));break;
     case'hut':toast('Chatka zielarki Wandy. Pachnie ziołami.');break;
     case'frog':near(o,1,()=>openBogMap());break;
@@ -2232,7 +2238,7 @@ function sealsFound(){return ['bog','dials','mirror'].filter(k=>puz[k].taken).le
 function beaconTap(){
   if((inv.shard||0)>0){beacon.dep+=inv.shard;inv.shard=0;invDirty=true;sfx('rune',beacon.dep-1);
     const [wx,wy]=iso(14,6);burst(wx,wy-40,'#9ff0ff',14,{sp:60,up:60,g:-20});
-    if(beacon.dep>=3&&!beacon.lit){beacon.lit=true;sfx('win');toast('Latarnia płonie!','rune');if(!won){won=true;setTimeout(openWin,1800);}ensureBoat();}
+    if(beacon.dep>=3&&!beacon.lit){beacon.lit=true;sfx('win');toast('Latarnia płonie!','rune');if(!won){won=true;setTimeout(openWin,1800);}ensureBoat(true);}
     else toast(`Odłamek osadzony w gnieździe (${beacon.dep}/3).`,'rune');save();return;}
   if(beacon.lit){toast('Latarnia świeci nad całą wyspą.');return;}
   toast(`Stara latarnia ma trzy puste gniazda na odłamki run (${beacon.dep}/3).`);
@@ -2800,14 +2806,16 @@ function openPen(o){
 }
 function boatDests(){const d=[];if(lv.id!==0&&beacon.lit)d.push(0);if(lv.id!==1&&beacon.lit)d.push(1);if(lv.id!==3&&puz.gate.open)d.push(3);if(lv.id!==4&&flags.ring_frost)d.push(4);if(lv.id!==5&&flags.ring_frost)d.push(5);if(lv.id!==6&&ringsFound()>=3)d.push(6);return d;}
 const DESTD={0:'Spokojna wyspa z latarnią i rybakiem Olkiem.',1:'Ruiny, bagno i jaskinia. Zielarka Wanda i górnik Bruno.',3:'Pół wyspy skuwa lód. Mroźne noce, wilki i zamarzające jezioro.',4:'Wulkan, rzeki lawy i kwaśne deszcze.',5:'Wydmy, oaza i coś ogromnego pod piaskiem.',6:'Wyspa z kamiennym pierścieniem. Trzy fragmenty pasują do jego ramy.'};
+function pendingHere(){const out=[];for(const o of objs){if(o.type!=='npc'||!QUESTS[o.who])continue;const st=npcState(o.who);if(!st)continue;const q=QUESTS[o.who][qget(o.who).i];const nm=NPC[o.who]?NPC[o.who].name:o.who;
+  if(st==='ready')out.push(`<b>${nm}</b>: „${q.title}” czeka na oddanie i nagrodę`);else if(st==='busy')out.push(`<b>${nm}</b>: „${q.title}” jeszcze w toku (${qProg(q,qget(o.who))})`);else out.push(`<b>${nm}</b> ma dla ciebie zadanie „${q.title}”`);}return out;}
 function openBoat(){
-  const ds=boatDests();
+  const ds=boatDests(),pend=pendingHere();
   $('#card').dataset.lock='';openModal(`<button class="close" id="mClose" aria-label="Zamknij">×</button><div class="who"><canvas id="capCv" width="128" height="128"></canvas><div><div class="kick">Kapitan Mira</div><h2>Dokąd płyniemy?</h2></div></div>
-  <p>${ds.length?'Wybierz cel. Na każdej wyspie zostanie wszystko, co zbudujesz.':'Na razie nie mam dokąd cię zabrać.'}</p>${ds.map(id=>`<div class="recipe"><span data-ic="boat"></span><div><div class="nm">${LVDEF[id].name}</div><div class="ds">${DESTD[id]}</div></div><button class="btn sm" data-go="${id}">Płyń</button></div>`).join('')}
+  <p>${ds.length?'Wybierz cel. Na każdej wyspie zostanie wszystko, co zbudujesz.':'Na razie nie mam dokąd cię zabrać.'}</p>${pend.length&&ds.length?`<div class="qbox" style="border-color:rgba(255,154,122,.55)"><div class="g">Niedokończone sprawy na tej wyspie</div><ul style="margin:6px 0 0;padding-left:18px">${pend.map(x=>`<li>${x}</li>`).join('')}</ul><div class="pr" style="margin-top:6px">Możesz wrócić tu później, ale może lepiej najpierw je skończyć?</div></div>`:''}${ds.map(id=>`<div class="recipe"><span data-ic="boat"></span><div><div class="nm">${LVDEF[id].name}</div><div class="ds">${DESTD[id]}</div></div><button class="btn sm" data-go="${id}">Płyń</button></div>`).join('')}
   ${!puz.gate.open&&lv.id===1?'<p>Dalsze wyspy pojawią się na mapie, gdy otworzysz wrota świątyni.</p>':''}<div class="row"><button class="btn ghost" id="mOk">Jeszcze nie</button></div>`);
   hydrate();const x=$('#capCv').getContext('2d');x.scale(128/100,128/100);drawPortrait(x,STY.mira,PORTBG.mira);
   $('#mClose').onclick=closeModal;$('#mOk').onclick=closeModal;
-  $('#card').querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{closeModal();sfx('splash');const id=+b.dataset.go;const dst=id===0?LV[0].boatLand:LVDEF[id].start;gotoLevel(id,dst[0],dst[1]);});
+  $('#card').querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{if(pend.length&&!b.dataset.ok){b.dataset.ok='1';b.textContent='Na pewno płynę';b.classList.add('warn');$('#card').querySelectorAll('[data-go]').forEach(x=>{if(x!==b&&x.dataset.ok){delete x.dataset.ok;x.textContent='Płyń';x.classList.remove('warn');}});return;}closeModal();sfx('splash');const id=+b.dataset.go;const dst=id===0?LV[0].boatLand:LVDEF[id].start;gotoLevel(id,dst[0],dst[1]);});
 }
 function helpHTML(){return`<ul>
 <li><strong>Stuknij ziemię</strong>, by tam pójść. <strong>Stuknij rzecz</strong>, by ją zebrać lub użyć.</li>
@@ -3151,7 +3159,7 @@ function buildLights(){
   if(p.lightOn)L(p.x,p.y,tools.lantern?4.6:4.2,true,'warm');
   for(const o of objs){switch(o.type){
     case'campfire':L(o.x,o.y,4.6,true,'warm');break;case'vent':L(o.x,o.y,1.2,false,'warm',.6);break;case'torchpost':L(o.x,o.y,4.2,true,'warm');break;case'shelter':L(o.x,o.y,2.6,true,'warm',.8);break;case'hut':L(o.x,o.y,2.6,true,'warm',.8);break;
-    case'smoker':if(o.load>0)L(o.x,o.y,1.6,false,'warm',.7);break;case'beacon':if(beacon.lit)L(o.x,o.y,10,true,'warm');break;case'boat':L(o.x,o.y,2.4,true,'warm',.8);break;
+    case'smoker':if(o.load>0)L(o.x,o.y,1.6,false,'warm',.7);break;case'beacon':if(beacon.lit)L(o.x,o.y,10,true,'warm');break;case'boat':if(!o.arrive)L(o.x,o.y,2.4,true,'warm',.8);break;
     case'plate':if(puz.lights.on[o.k])L(o.x,o.y,.9,false,'cyan',.6);break;case'totem':if(puz.totem.lit[o.sym])L(o.x,o.y,1.2,false,'warm',.8);break;
     case'glowshroom':L(o.x,o.y,1.3,false,'cyan',.75);break;case'crystal':L(o.x,o.y,1.7,false,'violet',.8);break;
     case'heart':L(o.x,o.y,puz.mirror.solved?4.5:1.4,puz.mirror.solved,'cyan');break;case'shaft':L(o.x,o.y,2.6,true,'gold');break;case'caveexit':L(o.x,o.y,2.8,true,'gold');break;
@@ -3200,6 +3208,7 @@ function update(dt){
   lightsNow=buildLights();
   for(const o of objs){
     if(o.type==='dudnik'){o.t-=dt;if(o.t<=0){removeObj(o);continue;}}
+    if(o.type==='boat'&&o.arrive){o.arrive.t+=dt;if(o.arrive.t>=o.arrive.dur){delete o.arrive;playS('splash',.7);toast('Łódź kapitan Miry przybiła do brzegu pod latarnią. Stuknij ją, gdy zechcesz płynąć dalej.','good');save();}}
     if(o.shake>0)o.shake=Math.max(0,o.shake-dt);
     if(o.anim)o.anim=Math.max(0,o.anim-dt*5);
     if(o.spin)o.spin=Math.max(0,o.spin-dt*4);
