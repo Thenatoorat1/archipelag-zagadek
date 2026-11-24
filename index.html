@@ -162,6 +162,44 @@ button:focus-visible{outline:2px solid var(--rune);outline-offset:2px}
 #hurt{position:fixed;inset:0;z-index:3;pointer-events:none;opacity:0;transition:opacity .5s;background:radial-gradient(ellipse at center,rgba(180,20,40,0) 45%,rgba(180,20,40,.55))}
 @media (max-width:520px){.bar{width:40px}.zoom button{width:36px;height:36px;font-size:17px}.btn{padding:0 11px;font-size:14px}.pill{font-size:13px}}
 @media (prefers-reduced-motion:reduce){.toast{animation:none}}
+
+/* ===== ekran tytułowy ===== */
+body.ton #hud,body.ton .zoom,body.ton #ctrBtn{opacity:0;pointer-events:none!important}
+#hud,.zoom{transition:opacity .5s}
+#title{position:fixed;inset:0;z-index:8;display:flex;flex-direction:column;overflow:hidden;color:#f6ecd6;padding:max(18px,env(safe-area-inset-top,0px)) max(18px,env(safe-area-inset-right,0px)) max(14px,env(safe-area-inset-bottom,0px)) max(18px,env(safe-area-inset-left,0px));transition:opacity .6s}
+#title.out{opacity:0;pointer-events:none}
+#title .tv{position:absolute;inset:0;pointer-events:none;background:radial-gradient(120% 90% at 30% 45%,rgba(4,16,24,0) 30%,rgba(4,14,22,.55) 70%,rgba(3,10,16,.9) 100%),linear-gradient(90deg,rgba(3,12,18,.9) 0%,rgba(3,12,18,.6) 34%,rgba(3,12,18,0) 60%)}
+#title .beam{position:absolute;left:-10vmax;top:50%;width:140vmax;height:140vmax;margin-top:-70vmax;pointer-events:none;background:conic-gradient(from 0deg,rgba(255,220,140,0) 0deg,rgba(255,220,140,.13) 8deg,rgba(255,220,140,0) 18deg,rgba(255,220,140,0) 360deg);animation:beam 9s linear infinite;mix-blend-mode:screen;transform-origin:50% 50%}
+@keyframes beam{to{transform:rotate(360deg)}}
+#title .motes{position:absolute;inset:0;pointer-events:none}
+#title .motes i{position:absolute;width:3px;height:3px;border-radius:50%;background:#ffe3a0;box-shadow:0 0 8px 2px rgba(255,210,120,.6);opacity:0;animation:mote 9s ease-in-out infinite}
+@keyframes mote{0%{opacity:0;transform:translateY(0)}20%{opacity:.9}80%{opacity:.6}100%{opacity:0;transform:translate(30px,-140px)}}
+.tin{position:relative;flex:1;display:flex;flex-direction:column;justify-content:center;max-width:520px;gap:22px;min-height:0}
+.tlogo .tk{font:700 12px var(--fb);letter-spacing:.24em;text-transform:uppercase;color:#f3b23f;display:flex;align-items:center;gap:10px}
+.tlogo .tk:before{content:"";width:28px;height:2px;background:#f3b23f;border-radius:2px}
+.tlogo h1{margin:8px 0 6px;font:700 clamp(44px,9vw,86px)/.92 var(--fd);letter-spacing:-.01em;color:#fff3d6;text-shadow:0 3px 0 #b56a1a,0 6px 0 #6e3a0e,0 14px 30px rgba(0,0,0,.55)}
+.tlogo h1 span{display:block;color:#ffcf6a;font-size:.78em;text-shadow:0 3px 0 #8a4a10,0 6px 0 #4e2808,0 14px 30px rgba(0,0,0,.55)}
+.tlogo p{margin:0;font:600 clamp(14px,2.2vw,17px) var(--fb);color:#d7e6e2;max-width:34ch}
+.tmenu{display:flex;flex-direction:column;gap:10px;align-items:stretch;max-width:340px}
+.tbtn{display:flex;align-items:center;gap:12px;width:100%;min-height:50px;padding:0 18px;border-radius:16px;border:1px solid rgba(255,255,255,.14);background:rgba(8,24,32,.62);color:#f6ecd6;font:700 17px var(--fb);cursor:pointer;text-align:left;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);transition:transform .15s,background .2s,border-color .2s}
+.tbtn:hover,.tbtn:focus-visible{background:rgba(20,48,60,.8);border-color:#f3b23f;transform:translateX(4px);outline:none}
+.tbtn .ti{width:26px;text-align:center;font-size:19px;color:#f3b23f}
+.tbtn.main{min-height:62px;font:700 21px var(--fd);background:linear-gradient(180deg,#ffd27a,#f0a83a);color:#2b1a05;border-color:#ffe1a0;box-shadow:0 6px 0 #a8641a,0 14px 26px rgba(0,0,0,.4)}
+.tbtn.main .ti{color:#2b1a05}.tbtn.main:hover{background:linear-gradient(180deg,#ffdc8e,#f5b24a);transform:translateY(-2px)}
+.tbtn.main:active{transform:translateY(3px);box-shadow:0 3px 0 #a8641a,0 8px 16px rgba(0,0,0,.4)}
+.tbtn.warn{border-color:#ff9a7a;color:#ffd0c0}
+.tpanel{background:rgba(8,24,32,.82);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:18px 18px 14px;max-width:460px;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);overflow:auto;max-height:min(70vh,560px)}
+.tpanel h2{margin:0 0 12px;font:700 24px var(--fd)}
+.tset{display:grid;grid-template-columns:1fr auto;gap:10px 14px;align-items:center;margin-bottom:14px}
+.tset label{font:700 14.5px var(--fb)}.tset .val{font:700 13px var(--fb);color:#f3b23f;min-width:40px;text-align:right}
+.tset input[type=range]{grid-column:1/-1;width:100%;accent-color:#f3b23f;margin:-4px 0 4px}
+.seg{display:inline-flex;padding:3px;border-radius:12px;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.1)}
+.seg button{border:0;background:none;color:#b8c8c4;font:700 13px var(--fb);padding:6px 12px;border-radius:9px;cursor:pointer}.seg button.on{background:#f3b23f;color:#2b1a05}
+.cred{display:grid;gap:12px;margin-bottom:14px}.cred div{display:grid;gap:2px}.cred b{font:700 11px var(--fb);letter-spacing:.14em;text-transform:uppercase;color:#f3b23f}.cred span{font:600 15px var(--fb);color:#e8efe9}
+.tfoot{position:relative;display:flex;justify-content:space-between;gap:10px;font:600 12px var(--fb);color:rgba(230,240,236,.55)}
+@media (max-width:640px){.tlogo .tk{letter-spacing:.14em;font-size:11px}.tin{justify-content:flex-end;padding-bottom:8px}#title .tv{background:linear-gradient(0deg,rgba(3,12,18,.92) 0%,rgba(3,12,18,.6) 45%,rgba(3,12,18,.1) 75%)}.tmenu{max-width:none}.tbtn{min-height:46px}}
+@media (max-height:520px){.tin{gap:12px}.tlogo h1{font-size:40px}.tlogo p{display:none}.tmenu{display:grid;grid-template-columns:1fr 1fr;max-width:480px}.tbtn.main{grid-column:1/-1;min-height:50px}.tbtn{min-height:42px;font-size:15px}}
+@media (prefers-reduced-motion:reduce){#title .beam,#title .motes i{animation:none}}
 </style>
 
 <canvas id="c" aria-label="Archipelag Zagadek — izometryczna mapa"></canvas>
@@ -196,10 +234,12 @@ button:focus-visible{outline:2px solid var(--rune);outline-offset:2px}
   <button id="rotR" aria-label="Obróć kamerę w prawo">⟳</button>
   <button id="skillBtn" aria-label="Umiejętności" hidden>★</button>
   <button id="musBtn" aria-label="Muzyka: włącz lub wyłącz">♪</button>
-  <button id="helpBtn" aria-label="Pomoc">?</button>
+  <button id="helpBtn" aria-label="Samouczek">?</button>
+  <button id="menuBtn" aria-label="Menu główne">☰</button>
 </div>
 <button id="ctrBtn" class="ctr" aria-label="Wróć kamerą do postaci" title="Wróć do postaci (C)" hidden><span>⌖</span> Do postaci</button>
 <div id="fade"></div>
+<div id="title" hidden><div class="beam"></div><div class="tv"></div><div class="motes" id="tMotes"></div><div class="tin" id="tIn"></div><div class="tfoot"><span>v1.0 · gra w przeglądarce</span><span>Muzyka i dźwięki: Magnific</span></div></div>
 <div id="modal" hidden><div class="card" id="card"></div></div>
 
 <script>
@@ -1774,7 +1814,7 @@ function musicStart(){
     el.addEventListener('ended',()=>{const pl=M.pl&&M.pl[k];if(pl){M.pli[k]=(M.pli[k]+1)%pl.length;el._nm=pl[M.pli[k]];el.src='music/'+el._nm+'.mp3';el.play().catch(()=>{});}});}
   setMusicFor(lv?lv.id:0);
   M.next=c.currentTime+.15;setInterval(musicTick,50);
-  M.master.gain.setTargetAtTime(M.on?.5:0,c.currentTime,1.5);
+  M.master.gain.setTargetAtTime(M.on?.5*SET.mus:0,c.currentTime,1.5);if(M.sfx)M.sfx.gain.value=SET.sfx;
 }
 function setMusicFor(id){if(!M.el)return;const mus=LVDEF[id].mus||['m0a','m0b'];M.pl={};M.pli={d:0,n:0};
   const set=(el,nm)=>{el._nm=nm;el._tried=null;el.src='music/'+nm+'.mp3';};
@@ -1828,7 +1868,10 @@ function maraVoice(m,kind){
   else if(kind==='hurt'){osc('sine',430,190,.4,.7,[12,30]);}
   else if(kind==='die'){osc('sine',320,60,1.2,.7,[6,15]);nz(1500,200,1.2,.6,1.5);}
 }
-function musicToggle(){M.on=!M.on;try{localStorage.setItem('wyspa-music',M.on?'on':'off');}catch(e){}$('#musBtn').classList.toggle('off',!M.on);if(AC&&M.started)M.master.gain.setTargetAtTime(M.on?.5:0,AC.currentTime,.4);else audioInit();}
+let SET={mus:.8,sfx:.9,gfx:'high',shake:true,tut:true};try{Object.assign(SET,JSON.parse(localStorage.getItem('archipelag-set')||'{}'));}catch(e){}
+function saveSet(){try{localStorage.setItem('archipelag-set',JSON.stringify(SET));}catch(e){}}
+function applyAudioSet(){if(!AC||!M.master)return;M.master.gain.setTargetAtTime(M.on?.5*SET.mus:0,AC.currentTime,.2);if(M.sfx)M.sfx.gain.setTargetAtTime(SET.sfx,AC.currentTime,.05);}
+function musicToggle(){M.on=!M.on;try{localStorage.setItem('wyspa-music',M.on?'on':'off');}catch(e){}$('#musBtn').classList.toggle('off',!M.on);if(AC&&M.started)M.master.gain.setTargetAtTime(M.on?.5*SET.mus:0,AC.currentTime,.4);else audioInit();}
 function act(k){return M.w[k]>.02||M.bus[k].gain.value>.02;}
 function playStep(s,t){
   const bar=Math.floor(s/16),ib=s%16,ci=Math.floor(s/32)%4,R=Math.random;
@@ -2731,13 +2774,59 @@ function helpHTML(){return`<ul>
 <li>Nocą z mroku wychodzą <strong>nocne mary</strong>. Boją się światła: pochodnia zapali się sama, gdy ją masz.</li>
 <li><strong>Stuknij marę lub zwierzę</strong>, by zaatakować. Z łukiem strzelasz z daleka.</li>
 <li>Pilnuj <strong>nawodnienia</strong>. Pij ze strumieni i źródeł. Wodę ze stawu lub bagna przegotuj przy ognisku. Łapacz deszczówki zbiera czystą wodę w deszczu.</li><li>Rozbitkowie z <strong>!</strong> nad głową mają zadania. Miejsca z zagadkami lekko świecą.</li><li>Na Wyspie Pierścienia stoi kamienny <strong>pierścień</strong>. Zasilasz jego <strong>terminal</strong> kryształami i wybierasz w nim adres świata z czterech znaków. Na Księżycu pilnuj <strong>tlenu</strong>.</li><li>Na Veyrze, na wschód od jeziora, obozują <strong>najemnicy</strong> z tarczami energetycznymi. Bij, aż tarcza pęknie.</li><li><strong>Mapę przesuwasz</strong>, trzymając wciśniętą rolkę myszki i ciągnąc (na telefonie: dwoma palcami). Przycisk ⌖ lub klawisz C wraca kamerą do postaci.</li><li><strong>Umiejętności</strong> rosną, gdy coś robisz. Zobaczysz je po kliknięciu swojego awatara w lewym górnym rogu. Kamerę obracasz ⟲ ⟳ albo klawiszami Q i E, przybliżasz kółkiem myszy lub dwoma palcami.</li></ul>`;}
-function openIntro(){
+let titleOn=false;
+function startNew(){audioInit();openCreator(true,()=>{newGame();applyArch();snapCam();save();toast(look.name?`Powodzenia, ${look.name}! Stuknij gałąź na piasku, by ją podnieść.`:'Stuknij gałąź leżącą na piasku, by ją podnieść.');setTimeout(()=>toast('Rybak Olek macha do ciebie z plaży.'),2500);if(SET.tut&&!tutSeen())setTimeout(()=>openTutorial(0),600);});}
+function closeTitle(){const T=$('#title');T.classList.add('out');document.body.classList.remove('ton');titleOn=false;modalOpen=false;setTimeout(()=>{T.hidden=true;T.classList.remove('out');},600);}
+function openIntro(inGame){
+  const T=$('#title');titleOn=true;modalOpen=true;closeModal();modalOpen=true;document.body.classList.add('ton');T.hidden=false;
+  if(!inGame){time=DAY*.32;}
+  if(!$('#tMotes').children.length)$('#tMotes').innerHTML=Array.from({length:22},(_,i)=>`<i style="left:${(i*37)%100}%;top:${30+(i*53)%65}%;animation-delay:${(i*.83)%9}s;animation-duration:${7+(i%5)}s"></i>`).join('');
+  showMain(inGame);
+}
+function showMain(inGame){const saved=hasSave();
+  const B=(id,ic,txt,cls)=>`<button class="tbtn ${cls||''}" id="${id}"><span class="ti">${ic}</span>${txt}</button>`;
+  $('#tIn').innerHTML=`<div class="tlogo"><div class="tk">Izometryczna przygoda survivalowa</div><h1>Archipelag<span>Zagadek</span></h1><p>Rozbitek, stara latarnia i wyspy pełne zagadek. A za nimi kamienny pierścień, który prowadzi do gwiazd.</p></div>
+  <nav class="tmenu" aria-label="Menu główne">${inGame?B('tResume','▶','Wróć do gry','main'):saved?B('tCont','▶','Kontynuuj przygodę','main'):B('tNew','▶','Zacznij przygodę','main')}
+  ${!inGame&&saved?B('tNew','✦','Nowa przygoda','warnable'):''}${B('tTut','?','Samouczek')}${B('tSet','⚙','Ustawienia')}${B('tCred','♥','Autorzy')}</nav>`;
+  const q=id=>$('#'+id);
+  if(q('tResume'))q('tResume').onclick=()=>{playS('pick',.3);closeTitle();};
+  if(q('tCont'))q('tCont').onclick=()=>{audioInit();if(!load())newGame();snapCam();closeTitle();};
+  if(q('tNew')){let armed=!saved||inGame;q('tNew').onclick=e=>{if(!armed){armed=true;const b=e.currentTarget;b.classList.add('warn');b.lastChild.textContent='Na pewno? Obecny zapis przepadnie';return;}closeTitle();startNew();};}
+  q('tTut').onclick=()=>{audioInit();window._tutBack=inGame?2:1;closeTitle();setTimeout(()=>openTutorial(0),300);};
+  q('tSet').onclick=()=>{audioInit();showSettings(inGame);};q('tCred').onclick=()=>showCredits(inGame);
+  setTimeout(()=>{const f=$('#tIn .tbtn');if(f&&matchMedia('(hover:hover)').matches)f.focus({preventScroll:true});},50);}
+function showSettings(inGame){const seg=(k,opts)=>`<span class="seg" data-k="${k}">${opts.map(([v,n])=>`<button data-v="${v}" class="${String(SET[k])===String(v)?'on':''}">${n}</button>`).join('')}</span>`;
+  $('#tIn').innerHTML=`<section class="tpanel" aria-label="Ustawienia"><h2>Ustawienia</h2>
+  <div class="tset"><label for="sMus">Muzyka</label><span class="val" id="vMus">${Math.round(SET.mus*100)}%</span><input type="range" id="sMus" min="0" max="100" value="${Math.round(SET.mus*100)}">
+  <label for="sSfx">Efekty dźwiękowe</label><span class="val" id="vSfx">${Math.round(SET.sfx*100)}%</span><input type="range" id="sSfx" min="0" max="100" value="${Math.round(SET.sfx*100)}">
+  <label>Jakość grafiki</label>${seg('gfx',[['high','Wysoka'],['low','Oszczędna']])}
+  <label>Wstrząsy ekranu</label>${seg('shake',[[true,'Wł.'],[false,'Wył.']])}
+  <label>Samouczek przy nowej grze</label>${seg('tut',[[true,'Wł.'],[false,'Wył.']])}</div>
+  <p class="ds" style="margin:0 0 12px">„Oszczędna” grafika rysuje w niższej rozdzielczości. Pomaga na słabszych telefonach i oszczędza baterię.</p>
+  <button class="tbtn" id="tBack"><span class="ti">‹</span>Wróć</button></section>`;
+  const sl=(id,k,v)=>{$('#'+id).oninput=e=>{SET[k]=e.target.value/100;$('#'+v).textContent=e.target.value+'%';applyAudioSet();saveSet();};};sl('sMus','mus','vMus');sl('sSfx','sfx','vSfx');
+  $('#sSfx').onchange=()=>playS('chime',.6);
+  $('#tIn').querySelectorAll('.seg').forEach(g=>g.querySelectorAll('button').forEach(b=>b.onclick=()=>{const k=g.dataset.k,v=b.dataset.v;SET[k]=v==='true'?true:v==='false'?false:v;g.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));saveSet();if(k==='gfx')resize();playS('pick',.3);}));
+  $('#tBack').onclick=()=>showMain(inGame);}
+function showCredits(inGame){
+  $('#tIn').innerHTML=`<section class="tpanel" aria-label="Autorzy"><h2>Autorzy</h2><div class="cred">
+  <div><b>Pomysł i kierunek gry</b><span>Thenatoorat1</span></div>
+  <div><b>Programowanie, grafika i projekt poziomów</b><span>Claude (Anthropic): cała grafika rysowana kodem, bez gotowych obrazków</span></div>
+  <div><b>Muzyka</b><span>18 ambientowych utworów wygenerowanych w Magnific (Google Lyria 3 Pro, dwa utwory ElevenLabs Music)</span></div>
+  <div><b>Efekty dźwiękowe</b><span>Wygenerowane w Magnific, plus syntezator w przeglądarce</span></div>
+  <div><b>Czcionki</b><span>Fredoka i Nunito (Google Fonts, licencja OFL)</span></div>
+  <div><b>Inspiracje</b><span>Klasyczne survivale, przygodówki z zagadkami i seriale science fiction. Postacie są oryginalne.</span></div>
+  <div><b>Dziękujemy</b><span>Każdemu, kto rozpalił latarnię na Wyspie Latarni.</span></div></div>
+  <button class="tbtn" id="tBack"><span class="ti">‹</span>Wróć</button></section>`;
+  $('#tBack').onclick=()=>showMain(inGame);}
+$('#menuBtn').onclick=()=>{save();openIntro(true);};
+function openIntroOld(){
   $('#card').dataset.lock='1';const saved=hasSave();
   openModal(`<div class="kick">Rozbitek na morzu północnym</div><h2>Archipelag Zagadek</h2><p>Sztorm rozbił twoją łódź o skały nieznanej wyspy. Na brzegu stoi stara latarnia. Jeśli znów zapłonie, ktoś ją dostrzeże. Jej ogień strzegą trzy odłamki run ukryte w starożytnych zagadkach.</p>${helpHTML()}
   <div class="row">${saved?'<button class="btn" id="mCont">Kontynuuj</button><button class="btn ghost" id="mNew">Nowa gra</button>':'<button class="btn" id="mNew">Wyrusz</button>'}</div>`);
   const go=()=>{audioInit();$('#card').dataset.lock='';closeModal();};
   if(saved)$('#mCont').onclick=()=>{if(!load())newGame();snapCam();go();};
-  let armed=!saved;$('#mNew').onclick=e=>{if(!armed){armed=true;e.target.textContent='Na pewno? Stuknij';return;}audioInit();openCreator(true,()=>{newGame();applyArch();snapCam();save();toast(look.name?`Powodzenia, ${look.name}! Stuknij gałąź na piasku, by ją podnieść.`:'Stuknij gałąź leżącą na piasku, by ją podnieść.');setTimeout(()=>toast('Rybak Olek macha do ciebie z plaży.'),2500);if(!tutSeen())setTimeout(()=>openTutorial(0),600);});};
+  let armed=!saved;$('#mNew').onclick=e=>{if(!armed){armed=true;e.target.textContent='Na pewno? Stuknij';return;}audioInit();openCreator(true,()=>{newGame();applyArch();snapCam();save();toast(look.name?`Powodzenia, ${look.name}! Stuknij gałąź na piasku, by ją podnieść.`:'Stuknij gałąź leżącą na piasku, by ją podnieść.');setTimeout(()=>toast('Rybak Olek macha do ciebie z plaży.'),2500);if(SET.tut&&!tutSeen())setTimeout(()=>openTutorial(0),600);});};
 }
 function openWin(){
   simpleModal(`Dzień ${dayNum()}`,'Latarnia znów płonie','<p>Snop światła przecina morze. Po chwili tuż pod latarnią przybija łódź kapitan Miry. Czeka, by zabrać cię na Wyspę Mgieł.</p><p>Stuknij łódź, gdy będziesz gotów. Możesz też zostać i dokończyć zadania Olka.</p>','Super');
@@ -2852,7 +2941,7 @@ function renderTut(){const s2=TUT[tutI],last=tutI===TUT.length-1;
   <div class="tutdots">${TUT.map((x,i)=>`<button aria-label="Krok ${i+1}: ${x.k}" class="${i===tutI?'on':''}" data-ti="${i}"></button>`).join('')}</div>
   <div class="tutnav"><button class="btn ghost" id="tPrev" ${tutI===0?'disabled':''}>‹ Wróć</button>${last?'<button class="btn ghost sm" id="tMore">Ściągawka</button>':'<button class="btn ghost sm" id="tSkip">Pomiń</button>'}<button class="btn" id="tNext">${last?'Do gry!':'Dalej ›'}</button></div></div>`);
   $('#card').classList.add('wide');tutT0=performance.now();
-  const end=()=>{tutOn=false;tutMark();closeModal();};
+  const end=()=>{tutOn=false;tutMark();closeModal();if(window._tutBack){const g=_tutBack===2;window._tutBack=0;openIntro(g);}};
   $('#mClose').onclick=end;const sk=$('#tSkip');if(sk)sk.onclick=end;const mo=$('#tMore');if(mo)mo.onclick=()=>{tutOn=false;tutMark();simpleModal('Ściągawka','Wszystko w jednym miejscu',helpHTML(),'Jasne');};
   $('#tPrev').onclick=()=>{if(tutI>0){tutI--;playS('pick',.3);renderTut();}};
   $('#tNext').onclick=()=>{if(last){end();return;}tutI++;playS('pick',.3);renderTut();};
@@ -2905,7 +2994,7 @@ function drawCreatorPreview(ts){if(!creatorOpen)return;const cvp=$('#cPrev');if(
 
 /* ================= INPUT ================= */
 let VW=0,VH=0,DPR=1,S=1;const cam={x:0,y:0};const lc=document.createElement('canvas'),lctx=lc.getContext('2d');
-function resize(){DPR=Math.min(2,window.devicePixelRatio||1);VW=innerWidth;VH=innerHeight;cv.width=Math.round(VW*DPR);cv.height=Math.round(VH*DPR);S=clamp(Math.min(VW,VH)/520,.72,1.25)*zoomMul;lc.width=Math.ceil(VW/2);lc.height=Math.ceil(VH/2);}
+function resize(){DPR=Math.min(SET.gfx==='low'?1:2,window.devicePixelRatio||1);VW=innerWidth;VH=innerHeight;cv.width=Math.round(VW*DPR);cv.height=Math.round(VH*DPR);S=clamp(Math.min(VW,VH)/520,.72,1.25)*zoomMul;lc.width=Math.ceil(VW/2);lc.height=Math.ceil(VH/2);}
 addEventListener('resize',resize);
 let down=null,hoverPt=null,hover=null;const hitList=[],crHit=[];
 const ptrs=new Map();let pinch=null,midDrag=null,panX=0,panY=0;
@@ -3103,9 +3192,10 @@ function hoverLabel(h){
   const t=T[idx(h.x,h.y)];if(t===MIRE)return'Bagno · mętna woda';if(t===FRESH&&!Br[idx(h.x,h.y)])return lv.id===0?'Staw · mętna woda':'Strumień · czysta woda';if(t===STEP)return'Kamień w błocie';if(!t&&!Br[idx(h.x,h.y)])return lv.def.space?'Pustka':lv.def.cave?'Przepaść':(inv.plank>0?'Woda · połóż kładkę':tools.rod?'Woda · łów ryby':'Woda');return null;
 }
 function render(ts){
+  if(titleOn){const t2=ts/1000,[cx0,cy0]=iso(W*.5,H*.52);cam.x=cx0+Math.cos(t2*.045)*W*7;cam.y=cy0-30+Math.sin(t2*.06)*H*3.2;}
   ctx.setTransform(DPR,0,0,DPR,0,0);ctx.fillStyle=lv.def.cave?'#040508':lv.def.space?'#02030a':seaCol();ctx.fillRect(0,0,VW,VH);
   if(lv.def.space)drawSpaceBg(ts);
-  const shx=shakeT>0?(Math.random()-.5)*shakeT*14:0,shy=shakeT>0?(Math.random()-.5)*shakeT*10:0;
+  const shk=SET.shake&&!titleOn?1:0,shx=shakeT>0?(Math.random()-.5)*shakeT*14*shk:0,shy=shakeT>0?(Math.random()-.5)*shakeT*10*shk:0;
   ctx.setTransform(DPR*S,0,0,DPR*S,DPR*(VW/2-cam.x*S+shx),DPR*(VH/2-cam.y*S+shy));
   const hw=VW/2/S,hh=VH/2/S,vx0=cam.x-hw-90,vx1=cam.x+hw+90,vy0=cam.y-hh-150,vy1=cam.y+hh+110;
   const inView=(cx,cy)=>cx>vx0&&cx<vx1&&cy>vy0&&cy<vy1;
