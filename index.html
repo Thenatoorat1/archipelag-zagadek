@@ -159,6 +159,7 @@ button:focus-visible{outline:2px solid var(--rune);outline-offset:2px}
 .archb{text-align:left;padding:9px 12px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--ink);cursor:pointer;display:flex;flex-direction:column;gap:2px}
 .archb b{font:600 15px var(--fd);color:#fff}.archb span{font:600 12.5px var(--fb);color:var(--ink-dim)}
 .archb.on{border-color:var(--amber);background:rgba(243,178,63,.14)}
+.crot{display:flex;align-items:center;justify-content:center;gap:10px;margin:-6px 0 8px}.crot button{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:rgba(255,255,255,.06);color:var(--ink);font-size:19px;cursor:pointer}.crot button:hover{border-color:var(--amber);color:var(--amber)}.crot span{min-width:96px;text-align:center;font:700 13px var(--fb);color:var(--ink-dim)}
 .copts input[type=range]{width:100%;accent-color:var(--amber)}
 @media (max-width:640px){.crea{grid-template-columns:1fr}.cprev{position:static}.cprev canvas{max-width:240px;align-self:center}}
 #fade{position:fixed;inset:0;z-index:4;background:#05080c;opacity:0;pointer-events:none;transition:opacity .4s}
@@ -3003,7 +3004,7 @@ function openCreator(isNew,done){creatorOpen=true;cIsNew=isNew;cDone=done;cLook=
   const sw=(cols,key)=>`<div class="sw">${cols.map((c,i)=>`<button class="swb" data-k="${key}" data-v="${i}" style="background:${c}" aria-label="${i+1}"></button>`).join('')}</div>`;
   const ch=(names,key,vals)=>`<div class="cg">${names.map((n,i)=>`<button class="chb" data-k="${key}" data-v="${vals?vals[i]:i}">${n}</button>`).join('')}</div>`;
   openModal(`${isNew?'':'<button class="close" id="mClose" aria-label="Zamknij">×</button>'}<div class="kick">${isNew?'Nowa gra':'Twoja postać'}</div><h2>${isNew?'Stwórz rozbitka':'Wygląd postaci'}</h2>
-  <div class="crea"><div class="cprev"><canvas id="cPrev" width="440" height="520"></canvas><input id="cName" maxlength="18" placeholder="Imię (opcjonalnie)" value="${(cLook.name||'').replace(/"/g,'')}"></div>
+  <div class="crea"><div class="cprev"><canvas id="cPrev" width="440" height="520" title="Przeciągnij, by obrócić postać"></canvas><div class="crot"><button type="button" id="cRotL" aria-label="Obróć postać w lewo">⟲</button><span id="cRotN">Przód</span><button type="button" id="cRotR" aria-label="Obróć postać w prawo">⟳</button></div><input id="cName" maxlength="18" placeholder="Imię (opcjonalnie)" value="${(cLook.name||'').replace(/"/g,'')}"></div>
   <div class="copts">
   <div class="ctabs" role="tablist">${TABS.map(([k,n])=>`<button class="ctab" role="tab" data-tab="${k}">${n}</button>`).join('')}</div>
   ${isNew?`<div class="cpane" data-pane="arch"><h3>Kim jesteś</h3><div class="arch">${Object.entries(ARCH).map(([k,a])=>`<button class="archb" data-k="arch" data-v="${k}"><b>${a.n}</b><span>${a.d}</span></button>`).join('')}</div></div>`:''}
@@ -3017,7 +3018,12 @@ function openCreator(isNew,done){creatorOpen=true;cIsNew=isNew;cDone=done;cLook=
   const showTab=k=>{cTab=k;card.querySelectorAll('.ctab').forEach(b=>{const on=b.dataset.tab===k;b.classList.toggle('on',on);b.setAttribute('aria-selected',on);});card.querySelectorAll('.cpane').forEach(p2=>p2.hidden=p2.dataset.pane!==k);const i=TABS.findIndex(t=>t[0]===k);$('#cStep').textContent=`Krok ${i+1} z ${TABS.length}`;$('#cNext').hidden=i>=TABS.length-1;};
   card.querySelectorAll('.ctab').forEach(b=>b.onclick=()=>{showTab(b.dataset.tab);playS('pick',.3);});
   $('#cNext').onclick=()=>{const i=TABS.findIndex(t=>t[0]===cTab);if(i<TABS.length-1)showTab(TABS[i+1][0]);};
-  showTab(TABS[0][0]);
+  showTab(TABS[0][0]);cRot=0;setCRot(0);
+  $('#cRotL').onclick=()=>{setCRot(-1);playS('pick',.25);};$('#cRotR').onclick=()=>{setCRot(1);playS('pick',.25);};
+  {const pv=$('#cPrev');let dx0=null,acc=0;pv.style.touchAction='pan-y';pv.style.cursor='grab';
+   pv.onpointerdown=e=>{dx0=e.clientX;acc=0;try{pv.setPointerCapture(e.pointerId);}catch(_){}pv.style.cursor='grabbing';};
+   pv.onpointermove=e=>{if(dx0===null)return;acc+=e.clientX-dx0;dx0=e.clientX;while(acc>36){acc-=36;setCRot(-1);}while(acc<-36){acc+=36;setCRot(1);}};
+   pv.onpointerup=pv.onpointercancel=()=>{dx0=null;pv.style.cursor='grab';};}
   const sync=()=>{card.querySelectorAll('[data-k]').forEach(b=>{const k=b.dataset.k,v=b.dataset.v;b.classList.toggle('on',String(cLook[k])===v);});};
   card.querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>{const k=b.dataset.k,v=b.dataset.v;cLook[k]=(k==='arch'||k==='hat')?v:+v;sync();playS('pick',.4);});
   $('#cH').oninput=e=>{cLook.height=e.target.value/100;};$('#cB').oninput=e=>{cLook.build=e.target.value/100;};
@@ -3027,11 +3033,14 @@ function openCreator(isNew,done){creatorOpen=true;cIsNew=isNew;cDone=done;cLook=
   const cl=$('#mClose');if(cl)cl.onclick=()=>{creatorOpen=false;card.classList.remove('wide');closeModal();};
   sync();
 }
+let cRot=0;const CROT=[['Przód','front',1,false],['Prawy skos','side',1,false],['Prawy tył','side',1,true],['Tył','back',1,true],['Lewy tył','side',-1,true],['Lewy skos','side',-1,false]];
+function setCRot(d){cRot=(((cRot+d)%6)+6)%6;const n=$('#cRotN');if(n)n.textContent=CROT[cRot][0];}
 function drawCreatorPreview(ts){if(!creatorOpen)return;const cvp=$('#cPrev');if(!cvp)return;const c=cvp.getContext('2d');c.setTransform(1,0,0,1,0,0);c.clearRect(0,0,cvp.width,cvp.height);
   const g=c.createRadialGradient(220,330,20,220,330,240);g.addColorStop(0,'rgba(127,230,255,.18)');g.addColorStop(1,'rgba(127,230,255,0)');c.fillStyle=g;c.fillRect(0,0,440,520);
   c.fillStyle='rgba(0,0,0,.25)';c.beginPath();c.ellipse(220,440,90,26,0,0,6.28);c.fill();
-  const st=styleOf(cLook);if(cTab==='face'||cTab==='hair'){c.save();c.beginPath();rr(c,20,20,400,400,24);c.clip();c.translate(20,20);c.scale(4,4);drawPortrait(c,st,'#2e5a64');c.restore();c.fillStyle='#eaf5ee';c.font='600 22px Fredoka, sans-serif';c.textAlign='center';c.fillText(cLook.name||(ARCH[cLook.arch]||ARCH.cast).n,220,470);return;}
-  const face=Math.sin(ts*.5)>0?1:-1;c.save();c.translate(220,440);c.scale(5.4,5.4);drawPerson(c,0,0,{st,face,bob:Math.sin(ts*2.2)*.6,ang:.25+Math.sin(ts*1.3)*.1,t:ts,alpha:1});c.restore();
+  const st=styleOf(cLook),R=CROT[((cRot%6)+6)%6];
+  c.save();c.translate(220,440);c.scale(5.4,5.4);drawPerson(c,0,0,{st,view:R[1],face:R[2],back:R[3],bob:Math.sin(ts*2.2)*.6,ang:.25+Math.sin(ts*1.3)*.1,t:ts,alpha:1});c.restore();
+  if(cTab==='face'||cTab==='hair'){c.save();c.beginPath();c.arc(362,78,62,0,6.28);c.clip();c.translate(300,16);c.scale(1.24,1.24);drawPortrait(c,st,'#2e5a64');c.restore();c.strokeStyle='#f3b23f';c.lineWidth=3;c.beginPath();c.arc(362,78,62,0,6.28);c.stroke();}
   c.fillStyle='#eaf5ee';c.font='600 22px Fredoka, sans-serif';c.textAlign='center';c.fillText(cLook.name||(ARCH[cLook.arch]||ARCH.cast).n,220,494);}
 
 /* ================= INPUT ================= */
