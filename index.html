@@ -2253,6 +2253,7 @@ function dialTap(o){const d=puz.dials;d.v[o.k]=(d.v[o.k]+1)%4;o.spin=1;sfx('tick
   if(d.v.every((v,i)=>v===DIAL_CODE[i])){d.solved=true;setTimeout(()=>{sfx('chime');toast('Tarcze zaskoczyły! Na ołtarzu w ruinach lśni pieczęć.','rune');},300);save();}}
 function altarTap(o){
   const st=puz[o.p];
+  if(o.p==='bog'&&!st.solved&&!st.taken){st.solved=true;const [wx,wy]=iso(o.x,o.y);burst(wx,wy-30,'#ffe08a',26,{sp:70,up:70,g:-20});toast('Przeszedłeś przez bagno! Na ołtarzu rozbłyska pieczęć.','rune');}
   if(RINGP.includes(o.p)&&!st.taken){st.taken=true;st.solved=true;add('ring',1,o.x,o.y);sfx('chime');const [wx,wy]=iso(o.x,o.y);burst(wx,wy-40,'#ffb86a',22,{sp:90,up:60,g:-10});flags['ring_'+o.p]=1;
     const n=ringsFound();toast(`Fragment pierścienia (${n}/3)! `+(n>=3?'Wszystkie fragmenty pasują do siebie! Kapitan Mira zna drogę na Wyspę Pierścienia.':o.p==='frost'?'Kapitan Mira zabierze cię teraz na Wyspę Ognia i Wyspę Piasków.':'Szukaj kolejnych.'),'rune');save();return;}
   if(st.solved&&!st.taken){st.taken=true;const isSeal=['bog','dials','mirror'].includes(o.p);add(isSeal?'seal':'shard',1,o.x,o.y);sfx('chime');const [wx,wy]=iso(o.x,o.y);burst(wx,wy-40,isSeal?'#ffe08a':'#9ff0ff',18,{sp:90,up:60,g:-10});
