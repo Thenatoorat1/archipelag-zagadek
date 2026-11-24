@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 </head>
 <body>
-<title>Wyspa Run</title>
+<title>Archipelag Zagadek</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800&display=swap">
@@ -155,7 +155,7 @@ button:focus-visible{outline:2px solid var(--rune);outline-offset:2px}
 @media (prefers-reduced-motion:reduce){.toast{animation:none}}
 </style>
 
-<canvas id="c" aria-label="Wyspa Run — izometryczna wyspa"></canvas>
+<canvas id="c" aria-label="Archipelag Zagadek — izometryczna mapa"></canvas>
 <div id="hurt"></div>
 <div id="hud">
   <div class="top">
@@ -2724,7 +2724,7 @@ function helpHTML(){return`<ul>
 <li>Pilnuj <strong>nawodnienia</strong>. Pij ze strumieni i źródeł. Wodę ze stawu lub bagna przegotuj przy ognisku. Łapacz deszczówki zbiera czystą wodę w deszczu.</li><li>Rozbitkowie z <strong>!</strong> nad głową mają zadania. Miejsca z zagadkami lekko świecą.</li><li>Na Wyspie Pierścienia stoi kamienny <strong>pierścień</strong>. Zasilasz jego <strong>terminal</strong> kryształami i wybierasz w nim adres świata z czterech znaków. Na Księżycu pilnuj <strong>tlenu</strong>.</li><li>Na Veyrze, na wschód od jeziora, obozują <strong>najemnicy</strong> z tarczami energetycznymi. Bij, aż tarcza pęknie.</li><li><strong>Mapę przesuwasz</strong>, trzymając wciśniętą rolkę myszki i ciągnąc (na telefonie: dwoma palcami). Przycisk ⌖ lub klawisz C wraca kamerą do postaci.</li><li><strong>Umiejętności</strong> rosną, gdy coś robisz. Zobaczysz je po kliknięciu swojego awatara w lewym górnym rogu. Kamerę obracasz ⟲ ⟳ albo klawiszami Q i E, przybliżasz kółkiem myszy lub dwoma palcami.</li></ul>`;}
 function openIntro(){
   $('#card').dataset.lock='1';const saved=hasSave();
-  openModal(`<div class="kick">Rozbitek na morzu północnym</div><h2>Wyspa Run</h2><p>Sztorm rozbił twoją łódź o skały nieznanej wyspy. Na brzegu stoi stara latarnia. Jeśli znów zapłonie, ktoś ją dostrzeże. Jej ogień strzegą trzy odłamki run ukryte w starożytnych zagadkach.</p>${helpHTML()}
+  openModal(`<div class="kick">Rozbitek na morzu północnym</div><h2>Archipelag Zagadek</h2><p>Sztorm rozbił twoją łódź o skały nieznanej wyspy. Na brzegu stoi stara latarnia. Jeśli znów zapłonie, ktoś ją dostrzeże. Jej ogień strzegą trzy odłamki run ukryte w starożytnych zagadkach.</p>${helpHTML()}
   <div class="row">${saved?'<button class="btn" id="mCont">Kontynuuj</button><button class="btn ghost" id="mNew">Nowa gra</button>':'<button class="btn" id="mNew">Wyrusz</button>'}</div>`);
   const go=()=>{audioInit();$('#card').dataset.lock='';closeModal();};
   if(saved)$('#mCont').onclick=()=>{if(!load())newGame();snapCam();go();};

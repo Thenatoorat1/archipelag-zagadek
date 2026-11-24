@@ -1,4 +1,4 @@
-# Wyspa Run
+# Archipelag Zagadek
 
 Izometryczna gra survivalowa w przeglądarce. Zbierasz surowce, rozwiązujesz zagadki, budujesz szałas i płyniesz łodzią na kolejne wyspy, a potem przez kamienny pierścień na Księżyc i obcą planetę Veyra.
 
