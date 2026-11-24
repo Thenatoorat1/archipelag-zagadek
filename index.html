@@ -67,6 +67,25 @@ body{height:100%;margin:0;overflow:hidden;background:var(--deep);color:var(--ink
 .bottom{display:flex;gap:8px;align-items:flex-end;pointer-events:auto}
 #inv{flex:1;min-width:0;display:flex;gap:6px;overflow-x:auto;padding:6px;background:var(--panel);border:1px solid var(--line);border-radius:16px;scrollbar-width:none;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
 #inv::-webkit-scrollbar{display:none}
+#inv{overflow:hidden}
+.slot.bag{background:linear-gradient(rgba(243,178,63,.28),rgba(243,178,63,.14));border-color:rgba(243,178,63,.6);color:#ffe2a8}
+.slot.bag svg{width:30px;height:30px}
+.slot.bag .more{position:absolute;top:-7px;right:-7px;min-width:22px;height:20px;border-radius:10px;background:var(--amber);color:#2b1a05;font:700 11.5px/20px var(--fd);text-align:center;padding:0 5px;box-shadow:0 2px 4px rgba(0,0,0,.5)}
+.slot.hole{background:rgba(0,0,0,.18);border-style:dashed;cursor:default;opacity:.55}
+.slot.pinned::before,.bcell.pinned::before{content:"";position:absolute;right:4px;top:4px;width:7px;height:7px;border-radius:50%;background:#7fe6ff;box-shadow:0 0 4px #7fe6ff}
+.bsec{font:700 12px var(--fb);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-dim);margin:12px 2px 6px}
+.bgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(54px,1fr));gap:6px}
+.bcell{position:relative;aspect-ratio:1;border-radius:12px;background:rgba(255,255,255,.06);border:1px solid var(--line);display:grid;place-items:center;padding:0;color:var(--ink);cursor:pointer;min-width:0}
+.bcell canvas{width:62%;height:62%}
+.bcell .n{position:absolute;right:4px;bottom:1px;font:700 12.5px var(--fd);text-shadow:0 1px 2px #000,0 0 4px #000}
+.bcell.hole{background:rgba(0,0,0,.2);border-style:dashed;cursor:default}
+.bcell.tool{background:rgba(243,178,63,.13);border-color:rgba(243,178,63,.4)}
+.bcell.sel{outline:2px solid var(--amber);outline-offset:1px;background:rgba(243,178,63,.22)}
+.binfo{display:flex;gap:12px;align-items:center;margin-top:12px;padding:10px 12px;border-radius:14px;background:rgba(0,0,0,.25);border:1px solid var(--line);min-height:64px}
+.binfo canvas{width:44px;height:44px;flex:0 0 auto}
+.binfo .tx{flex:1;min-width:0}.binfo b{display:block;font:700 15px var(--fd)}.binfo small{display:block;color:var(--ink-dim);font:500 13px/1.35 var(--fb)}
+.binfo .acts{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+@media(max-width:520px){#inv{gap:5px;padding:5px}.slot{width:44px;height:44px}.slot canvas{width:30px;height:30px}.bottom .btn{padding:0 11px;font-size:14px;height:46px}.bottom{gap:6px}.binfo{flex-wrap:wrap}.binfo .acts{width:100%}.binfo .acts .btn{flex:1}}
 .slot{position:relative;flex:0 0 auto;width:50px;height:50px;border-radius:12px;background:rgba(255,255,255,.06);border:1px solid var(--line);display:grid;place-items:center;padding:0;color:var(--ink);cursor:pointer}
 .slot canvas{width:34px;height:34px}
 .slot .n{position:absolute;right:4px;bottom:1px;font:700 12.5px var(--fd);text-shadow:0 1px 2px #000,0 0 4px #000;font-variant-numeric:tabular-nums}
@@ -2305,6 +2324,7 @@ function freshTap(tx,ty,clean){
 }
 function drink(n,msg){thirst=Math.min(100,thirst+n);if(!playS('drink',.7))sfx('eat');floatText(Math.round(p.x),Math.round(p.y),`+${n} nawodnienia`,'#9fd8ff');gainXp('surv',2);if(msg)toast(msg);}
 function drinkDirty(){drink(15,null);if(Math.random()<.5){hp=Math.max(1,hp-12);toast('Ta woda nie była czysta. Boli cię brzuch!','bad');}else toast('Mętna woda. Tym razem obyło się bez bólu brzucha.');}
+const ITEMINFO={plank:'Stuknij wodę tuż obok siebie, aby położyć kładkę.',shard:'Zanieś odłamki do latarni na północy wyspy.',seal:'Pieczęcie pasują do wrót świątyni na Wyspie Mgieł.',arrow:'Strzały do łuku. Stuknij zwierzę albo marę, by strzelić.',hide:'Skóry przydadzą się na szałas.',crystal:'Kryształy z jaskini. Górnik Bruno coś o nich mówił.',probe:'Zapis z sondy „Meridianu”. Jest w nim adres planety Veyra.',regolith:'Księżycowy pył. Komandor Ren może go potrzebować.',spore:'Świecące zarodniki z Veyry. Oficer Tavik je bada.',ecrystal:'Kryształ pełen energii. Pulsuje w dłoni.',chip:'Chip z tarczy najemnika. Nox wie, co z nim zrobić.',pcrystal:'Kryształ zasilający. Włóż go do terminala przy pierścieniu.'};
 function useItem(k){
   if(k==='water'||k==='dirty'){if(thirst>=99){toast('Nie chce ci się pić');return;}inv[k]--;inv.flask=(inv.flask||0)+1;invDirty=true;if(k==='water')drink(40,null);else drinkDirty();return;}
   if(k==='cfruit'){inv.cfruit--;invDirty=true;hunger=Math.min(100,hunger+6);drink(15,'Soczysty owoc kaktusa.');return;}
@@ -2320,7 +2340,7 @@ function useItem(k){
   if(k==='potion'){if(hp>=100){toast('Jesteś zdrowy jak ryba');return;}inv.potion--;hp=Math.min(100,hp+50);invDirty=true;sfx('eat');floatText(Math.round(p.x),Math.round(p.y),'+50 zdrowia','#ff9aa6');return;}
   if(PLACE[k])return placeBuilding(k);
   if(k==='torch'){if(p.lightOn)toast(`Pochodnia płonie jeszcze ${Math.ceil(torchT)} s.`);else if(darkness()>.1){p.lightOn=true;if(torchT<=0){inv.torch--;torchT=TORCH_T;invDirty=true;}}else toast('Pochodnia zapali się sama, gdy zapadnie zmrok.');return;}
-  const info={plank:'Stuknij wodę tuż obok siebie, aby położyć kładkę.',shard:'Zanieś odłamki do latarni na północy wyspy.',seal:'Pieczęcie pasują do wrót świątyni na Wyspie Mgieł.',arrow:'Strzały do łuku. Stuknij zwierzę albo marę, by strzelić.',hide:'Skóry przydadzą się na szałas.',crystal:'Kryształy z jaskini. Górnik Bruno coś o nich mówił.',probe:'Zapis z sondy „Meridianu”. Jest w nim adres planety Veyra.',regolith:'Księżycowy pył. Komandor Ren może go potrzebować.',spore:'Świecące zarodniki z Veyry. Oficer Tavik je bada.',ecrystal:'Kryształ pełen energii. Pulsuje w dłoni.',chip:'Chip z tarczy najemnika. Nox wie, co z nim zrobić.',pcrystal:'Kryształ zasilający. Włóż go do terminala przy pierścieniu.'};
+  const info=ITEMINFO;
   toast(info[k]||`${ITEMS[k]}: ${inv[k]} szt. Przyda się w Warsztacie.`);
 }
 function placeBuilding(k){
@@ -2733,13 +2753,46 @@ function hydrate(){$('#card').querySelectorAll('[data-ic]').forEach(s=>s.replace
 
 function toast(msg,cls){const el=document.createElement('div');el.className='toast '+(cls||'');el.textContent=msg;const box=$('#toasts');box.appendChild(el);while(box.children.length>3)box.firstChild.remove();setTimeout(()=>el.remove(),3400);}
 let invDirty=true;
+const BAGSVG='<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M11 9V7a5 5 0 0 1 10 0v2" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M7 12a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v13a3 3 0 0 1-3 3H10a3 3 0 0 1-3-3z" fill="#8a5a2b" stroke="#3a220c" stroke-width="1.6"/><path d="M10 17h12v6a2 2 0 0 1-2 2h-8a2 2 0 0 1-2-2z" fill="#a8723a" stroke="#3a220c" stroke-width="1.3"/><rect x="14.5" y="15.5" width="3" height="4" rx="1" fill="#f3b23f" stroke="#3a220c" stroke-width="1"/></svg>';
+function invKeys(){return ITEM_ORDER.filter(k=>(inv[k]||0)>0);}
+function hotN(){const el=$('#inv'),w=el.clientWidth||300,sm=matchMedia('(max-width:520px)').matches,st=sm?49:56;return Math.max(1,Math.floor((w-(sm?10:12)-(sm?44:50)+1)/st));}
+function hotKeys(){const have=invKeys(),N=hotN();const pins=(flags.hot||[]).filter(k=>(inv[k]||0)>0);const rest=have.filter(k=>!pins.includes(k));return pins.concat(rest).slice(0,N);}
+function mkSlot(k,cls){const b=document.createElement('button');b.className='slot'+(FOOD[k]||k==='potion'?' food':'')+(PLACE[k]?' place':'')+(cls||'');b.title=ITEMS[k];b.setAttribute('aria-label',`${ITEMS[k]}: ${inv[k]}`);b.appendChild(mkIcon(k,34));const n=document.createElement('span');n.className='n';n.textContent=inv[k];b.appendChild(n);b.onclick=()=>{audioInit();useItem(k);};return b;}
 function renderInv(){
-  const el=$('#inv');el.innerHTML='';let any=false;
-  for(const k of ['sword','emitter','bow','shield','armor','amulet','scanner','axe','pick','shovel','rod','lantern','coat','cloak','suit'])if(tools[k]){any=true;const key=k==='sword'?(swordKey()||'sword'):k==='suit'&&tools.suit2?'suit2':k;const b=document.createElement('button');b.className='slot tool';b.title=TOOLS[key];b.appendChild(mkIcon(key,34));b.onclick=()=>toast(`${TOOLS[key]}: zawsze pod ręką`);el.appendChild(b);}
-  for(const k of ITEM_ORDER)if((inv[k]||0)>0){any=true;const b=document.createElement('button');b.className='slot'+(FOOD[k]||k==='potion'?' food':'')+(PLACE[k]?' place':'');b.title=ITEMS[k];b.setAttribute('aria-label',`${ITEMS[k]}: ${inv[k]}`);b.appendChild(mkIcon(k,34));const n=document.createElement('span');n.className='n';n.textContent=inv[k];b.appendChild(n);
-    b.onclick=()=>{audioInit();useItem(k);};el.appendChild(b);}
-  if(!any){const s=document.createElement('span');s.className='empty';s.textContent='Plecak pusty. Stuknij gałąź lub kamyk.';el.appendChild(s);}
+  const el=$('#inv');el.innerHTML='';
+  const bag=document.createElement('button');bag.className='slot bag';bag.id='bagBtn';bag.title='Plecak (I)';bag.innerHTML=BAGSVG;el.appendChild(bag);
+  const have=invKeys(),hk=hotKeys(),N=hotN(),hidden=have.length-hk.length;
+  bag.setAttribute('aria-label',hidden>0?`Plecak, jeszcze ${hidden} rodzajów przedmiotów`:'Plecak');
+  if(hidden>0){const m=document.createElement('span');m.className='more';m.textContent='+'+hidden;bag.appendChild(m);}
+  bag.onclick=()=>{audioInit();openBag();};
+  const pins=flags.hot||[];
+  if(!have.length){const s=document.createElement('span');s.className='empty';s.textContent='Plecak pusty. Stuknij gałąź lub kamyk.';el.appendChild(s);}
+  else{for(const k of hk)el.appendChild(mkSlot(k,pins.includes(k)?' pinned':''));for(let i=hk.length;i<N;i++){const h=document.createElement('div');h.className='slot hole';el.appendChild(h);}}
   invDirty=false;
+}
+const TOOLLIST=['sword','emitter','bow','shield','armor','amulet','scanner','axe','pick','shovel','rod','lantern','coat','cloak','suit'];
+function toolKey(k){return k==='sword'?(swordKey()||'sword'):k==='suit'&&tools.suit2?'suit2':k;}
+function itemAct(k){if(['water','dirty','coconut','cfruit','potion'].includes(k))return'Wypij';if(FOOD[k]||k==='shroom')return'Zjedz';if(PLACE[k])return k==='pit'?'Wykop':'Postaw';if(k==='torch')return'Zapal';if(k==='o2')return'Odetchnij';if(k==='dudnik')return'Wbij w wydmę';return null;}
+function itemDesc(k){if(k==='shroom')return'Muchomory. Trujące! Po zjedzeniu będzie ci bardzo niedobrze. Zielarka Wanda robi z nich napary.';if(FOOD[k])return`Jedzenie: +${FOOD[k]} sytości.`+(k==='fish'||k==='meat'?' Na surowo słabo syci, lepiej upiec.':'');
+  if(k==='water')return'Czysta woda: gasi pragnienie.';if(k==='dirty')return'Brudna woda. Lepiej ją przegotować.';if(k==='potion')return'Mikstura: +50 zdrowia.';if(k==='coconut')return'Kokos: trochę jedzenia i dużo picia.';if(k==='cfruit')return'Owoc kaktusa: gasi pragnienie.';if(k==='o2')return'Butla tlenu: +50% tlenu na Księżycu.';if(PLACE[k])return'Budowla: postawisz ją tuż obok siebie.';
+  return ITEMINFO[k]||'Materiał do Warsztatu.';}
+let bagSel=null;
+function openBag(){if(modalOpen&&!$('#bagGrid'))return;
+  const have=invKeys(),pins=flags.hot||[],N=hotN();if(bagSel&&!(bagSel.t?tools[bagSel.k]:(inv[bagSel.k]||0)>0))bagSel=null;
+  const cells=Math.max(24,Math.ceil((have.length+1)/6)*6);let g='';
+  for(let i=0;i<cells;i++){const k=have[i];if(!k){g+='<div class="bcell hole"></div>';continue;}const on=bagSel&&!bagSel.t&&bagSel.k===k;g+=`<button class="bcell${pins.includes(k)?' pinned':''}${on?' sel':''}" data-k="${k}" aria-label="${ITEMS[k]}: ${inv[k]}"><span class="ic" data-i="${k}"></span><span class="n">${inv[k]}</span></button>`;}
+  const tl=TOOLLIST.filter(k=>tools[k]);let tg='';for(const k of tl){const on=bagSel&&bagSel.t&&bagSel.k===k;tg+=`<button class="bcell tool${on?' sel':''}" data-t="${k}" aria-label="${TOOLS[toolKey(k)]}"><span class="ic" data-i="${toolKey(k)}"></span></button>`;}
+  let info='<div class="binfo"><div class="tx"><small>Stuknij przedmiot, aby go obejrzeć, użyć albo przypiąć do paska. Przypięte przedmioty (niebieska kropka) zawsze są na pasku.</small></div></div>';
+  if(bagSel&&!bagSel.t){const k=bagSel.k,a=itemAct(k),pn=pins.includes(k);info=`<div class="binfo"><span class="ic" data-i="${k}"></span><div class="tx"><b>${ITEMS[k]} × ${inv[k]}</b><small>${itemDesc(k)}</small></div><div class="acts">${a?`<button class="btn sm" id="bUse">${a}</button>`:''}<button class="btn ghost sm" id="bPin">${pn?'Odepnij z paska':'Przypnij do paska'}</button></div></div>`;}
+  else if(bagSel&&bagSel.t){const key=toolKey(bagSel.k);info=`<div class="binfo"><span class="ic" data-i="${key}"></span><div class="tx"><b>${TOOLS[key]}</b><small>Wyposażenie działa samo, zawsze masz je przy sobie.</small></div></div>`;}
+  openModal(`<button class="close" id="mClose" aria-label="Zamknij">×</button><div class="kick">Ekwipunek</div><h2>Plecak</h2><div class="bsec">Przedmioty · ${have.length} rodzajów</div><div class="bgrid" id="bagGrid">${g}</div>${tl.length?`<div class="bsec">Narzędzia i wyposażenie</div><div class="bgrid">${tg}</div>`:''}${info}`);
+  const card=$('#card');card.classList.add('wide');
+  card.querySelectorAll('.ic').forEach(sp=>sp.replaceWith(mkIcon(sp.dataset.i,34)));
+  card.querySelectorAll('.bcell[data-k]').forEach(b=>b.onclick=()=>{bagSel={k:b.dataset.k};openBag();});
+  card.querySelectorAll('.bcell[data-t]').forEach(b=>b.onclick=()=>{bagSel={k:b.dataset.t,t:1};openBag();});
+  $('#mClose').onclick=()=>{bagSel=null;card.classList.remove('wide');closeModal();};
+  const u=$('#bUse');if(u)u.onclick=()=>{const k=bagSel.k;card.classList.remove('wide');closeModal();useItem(k);invDirty=true;};
+  const pb=$('#bPin');if(pb)pb.onclick=()=>{const k=bagSel.k;let h=(flags.hot||[]).filter(x=>(inv[x]||0)>0);if(h.includes(k))h=h.filter(x=>x!==k);else{h.push(k);if(h.length>N){h.shift();toast('Pasek jest pełny: odpięto najstarszy przedmiot.');}}flags.hot=h;invDirty=true;save();openBag();};
 }
 function objective(){
   if(lv.id===0){
@@ -3093,7 +3146,7 @@ function drawCreatorPreview(ts){if(!creatorOpen)return;const cvp=$('#cPrev');if(
 /* ================= INPUT ================= */
 let VW=0,VH=0,DPR=1,S=1;const cam={x:0,y:0};const lc=document.createElement('canvas'),lctx=lc.getContext('2d');
 function resize(){DPR=Math.min(SET.gfx==='low'?1:2,window.devicePixelRatio||1);VW=innerWidth;VH=innerHeight;cv.width=Math.round(VW*DPR);cv.height=Math.round(VH*DPR);S=clamp(Math.min(VW,VH)/520,.72,1.25)*zoomMul;lc.width=Math.ceil(VW/2);lc.height=Math.ceil(VH/2);}
-addEventListener('resize',resize);
+addEventListener('resize',resize);addEventListener('resize',()=>{invDirty=true;});
 let down=null,hoverPt=null,hover=null;const hitList=[],crHit=[];
 const ptrs=new Map();let pinch=null,midDrag=null,panX=0,panY=0;
 function panLimits(){const cs=[iso(0,0),iso(W,0),iso(0,H),iso(W,H)];return[Math.min(...cs.map(c=>c[0])),Math.max(...cs.map(c=>c[0])),Math.min(...cs.map(c=>c[1])),Math.max(...cs.map(c=>c[1]))];}
@@ -3454,7 +3507,7 @@ $('#ctrBtn').onclick=centerCam;
 function rotateCam(d){ROT=(ROT+d+4)%4;try{localStorage.setItem('wyspa-rot',ROT);}catch(e){}buildTerrain();snapCam();hover=null;}
 $('#rotL').onclick=()=>rotateCam(-1);$('#rotR').onclick=()=>rotateCam(1);$('#skillBtn').onclick=()=>{audioInit();openSkills();};$('#avatarBtn').onclick=()=>{audioInit();openSkills();};
 let avKey='',avT=0;function paintAvatar(force){const st=playerStyle(),k=JSON.stringify(st);if(!force&&k===avKey)return;avKey=k;const cv2=$('#avCv'),x=cv2.getContext('2d');x.setTransform(1,0,0,1,0,0);x.clearRect(0,0,104,104);x.translate(-6,-2);x.scale(1.16,1.16);drawPortrait(x,st,'#2e5a64');}
-addEventListener('keydown',e=>{if(modalOpen)return;const k=e.key.toLowerCase();if(k==='c')centerCam();else if(k==='q')rotateCam(-1);else if(k==='e')rotateCam(1);else if(k==='+'||k==='='){zoomMul=clamp(zoomMul*1.15,.5,2);applyZoom();}else if(k==='-'){zoomMul=clamp(zoomMul/1.15,.5,2);applyZoom();}});
+addEventListener('keydown',e=>{if(modalOpen)return;const k=e.key.toLowerCase();if(k==='c')centerCam();else if(k==='i'||k==='b'){if(!titleOn)openBag();}else if(k==='q')rotateCam(-1);else if(k==='e')rotateCam(1);else if(k==='+'||k==='='){zoomMul=clamp(zoomMul*1.15,.5,2);applyZoom();}else if(k==='-'){zoomMul=clamp(zoomMul/1.15,.5,2);applyZoom();}});
 })();
 </script>
 
